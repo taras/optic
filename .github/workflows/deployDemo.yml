@@ -14,7 +14,7 @@ jobs:
 
       - name: Set contextual vars
         run: |
-          if [ "$BRANCH" = "refs/heads/release" ]; then
+          if [ "$BRANCH" = "refs/heads/feature/demo-release" ]; then
             echo ::set-env name=BUCKET::optic-demo-website-production
             echo ::set-env name=SITE_URL::https://demo.useoptic.com
           elif [ "$BRANCH" = "refs/heads/feature/demo" ]; then
