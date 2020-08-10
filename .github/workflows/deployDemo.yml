@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/demo
+      - feature/demo-release
       - release
 jobs:
   build-demo-and-push:
