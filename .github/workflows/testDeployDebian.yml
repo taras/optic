@@ -1,0 +1,31 @@
+# Releases the latest version of Optic on NPM/Brew/Debian
+# Assumes the version has been updated
+# Triggers on all changes to the release branch
+
+name: Deploy Debian
+
+env:
+  BUCKET_NAME: optic-packages
+  PACKAGE_NAME: api
+
+on: 
+  push:
+    branches:
+      - test/deployDebianTest
+
+jobs:
+  # Creates debian package for users to install, hosted on s3
+  release-deb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # https://github.com/actions/checkout/commits/v2
+        with:
+          ref: release
+      - uses: ./.github/deployDebian/ # locally defined action
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BUCKET_NAME: optic-packages
+          PACKAGE_NAME: api
+          PREFIX_NAME: deb
+          NPM_PACKAGE_NAME: "@useoptic/cli"
