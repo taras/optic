@@ -14,8 +14,10 @@ use std::sync::Arc;
 use tokio::io::{stdin, stdout};
 use tokio::stream::StreamExt;
 use tokio::sync::{mpsc, Semaphore};
+use optic_diff::tracing::setup_global_subscriber;
 
 fn main() {
+  let _guard = setup_global_subscriber();
   let cli = App::new("Optic Diff engine")
     .version("1.0")
     .author("Optic Labs Corporation")

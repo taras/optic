@@ -6,6 +6,7 @@ pub use shape::ShapeProjection;
 
 use crate::events::SpecEvent;
 use cqrs_core::{Aggregate, AggregateEvent};
+use tracing::instrument;
 
 #[derive(Debug)]
 pub struct SpecProjection {
@@ -39,6 +40,7 @@ impl Aggregate for SpecProjection {
 }
 
 impl AggregateEvent<SpecProjection> for SpecEvent {
+  #[instrument]
   fn apply_to(self, projection: &mut SpecProjection) {
     match self {
       SpecEvent::EndpointEvent(event) => projection.endpoint.apply(event),

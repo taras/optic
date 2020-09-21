@@ -5,6 +5,7 @@ use crate::queries::shape::{ChoiceOutput, ShapeQueries};
 use crate::state::shape::{FieldId, ShapeId, ShapeKind, ShapeParameterId};
 use serde::Serialize;
 use serde_json::Value as JsonValue;
+use tracing::instrument;
 
 pub struct Traverser<'a> {
   shape_queries: &'a ShapeQueries<'a>,
@@ -14,7 +15,7 @@ impl<'a> Traverser<'a> {
   pub fn new(shape_queries: &'a ShapeQueries) -> Self {
     Traverser { shape_queries }
   }
-
+  #[instrument(skip(self, visitors))]
   pub fn traverse_root_shape<R>(
     &self,
     json_body_option: Option<JsonValue>,
@@ -33,6 +34,7 @@ impl<'a> Traverser<'a> {
     )
   }
 
+  #[instrument(skip(self, visitors))]
   pub fn traverse<R>(
     &self,
     json_body_option: Option<JsonValue>,

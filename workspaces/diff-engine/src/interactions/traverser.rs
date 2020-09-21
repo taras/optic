@@ -6,6 +6,7 @@ use crate::interactions::HttpInteraction;
 use crate::projections::endpoint::ROOT_PATH_ID;
 use crate::queries::endpoint::EndpointQueries;
 use crate::state::endpoint::PathComponentId;
+use tracing::instrument;
 
 pub struct Traverser<'a> {
   endpoint_queries: &'a EndpointQueries<'a>,
@@ -15,7 +16,7 @@ impl<'a> Traverser<'a> {
   pub fn new(endpoint_queries: &'a EndpointQueries) -> Self {
     Traverser { endpoint_queries }
   }
-
+  #[instrument(skip(self, visitors))]
   pub fn traverse<R>(
     &self,
     interaction: &HttpInteraction,

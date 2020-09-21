@@ -7,6 +7,7 @@ mod protos;
 mod queries;
 mod shapes;
 mod state;
+pub mod tracing;
 pub mod streams;
 
 pub use cqrs_core::Aggregate;
