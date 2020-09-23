@@ -13,6 +13,8 @@ import { lockFilePath } from './paths';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import findProcess from 'find-process';
 import stripAnsi from 'strip-ansi';
+// @ts-ignore
+import gitRev from 'git-rev-sync';
 import {
   ExitedTaskWithLocalCli,
   StartedTaskWithLocalCli,
@@ -54,7 +56,13 @@ export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
   deprecationLogger.enabled = true;
 
   const { paths, config } = await loadPathsAndConfig(cli);
-  const captureId = uuid.v4();
+  const captureId = (() => {
+    if (process.env.GITFLOW_CAPTURE) {
+      return gitRev.long(paths.basePath);
+    } else {
+      return uuid.v4();
+    }
+  })();
   const runner = new LocalCliTaskRunner(captureId, paths);
   const session = new CliTaskSession(runner);
   await session.start(cli, config, taskName);

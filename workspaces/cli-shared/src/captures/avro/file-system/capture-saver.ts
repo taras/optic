@@ -21,9 +21,20 @@ export class CaptureSaver implements ICaptureSaver {
     maxSize: 20,
     maxTime: 500,
   });
+
   private batchCount: number = 0;
 
-  constructor(private config: IFileSystemCaptureSaverConfig) {}
+  constructor(private config: IFileSystemCaptureSaverConfig) {
+    const sessionDirectory = path.join(
+      this.config.captureBaseDirectory,
+      this.config.captureId
+    );
+    const entries = fs.readdirSync(sessionDirectory);
+
+    const captureFiles = entries.filter((x) => x.endsWith(captureFileSuffix));
+    //provide for continuation
+    this.batchCount = captureFiles.length || 0;
+  }
 
   async init() {
     const { captureId } = this.config;
