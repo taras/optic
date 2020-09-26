@@ -36,6 +36,8 @@ import {
   warningFromOptic,
 } from '@useoptic/cli-shared';
 import * as uuid from 'uuid';
+//@ts-ignore
+import niceTry from 'nice-try';
 import { CliTaskSession } from '@useoptic/cli-shared/build/tasks';
 import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 import { EventEmitter } from 'events';
@@ -58,7 +60,7 @@ export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
   const { paths, config } = await loadPathsAndConfig(cli);
   const captureId = (() => {
     if (process.env.GITFLOW_CAPTURE) {
-      return gitRev.long(paths.basePath);
+      return niceTry(() => gitRev.long(paths.basePath)) || uuid.v4();
     } else {
       return uuid.v4();
     }
