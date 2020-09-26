@@ -58,17 +58,19 @@ export async function LocalTaskSessionWrapper(cli: Command, taskName: string) {
   deprecationLogger.enabled = true;
 
   const { paths, config } = await loadPathsAndConfig(cli);
-  const captureId = (() => {
-    if (process.env.GITFLOW_CAPTURE) {
-      return niceTry(() => gitRev.long(paths.basePath)) || uuid.v4();
-    } else {
-      return uuid.v4();
-    }
-  })();
+  const captureId = getCaptureId(paths);
   const runner = new LocalCliTaskRunner(captureId, paths);
   const session = new CliTaskSession(runner);
   await session.start(cli, config, taskName);
   return await cleanupAndExit();
+}
+
+function getCaptureId(paths: IPathMapping): string {
+  if (process.env.GITFLOW_CAPTURE) {
+    return niceTry(() => gitRev.long(paths.basePath)) || `uuid-${uuid.v4()}`;
+  } else {
+    return uuid.v4();
+  }
 }
 
 export class LocalCliTaskRunner implements IOpticTaskRunner {

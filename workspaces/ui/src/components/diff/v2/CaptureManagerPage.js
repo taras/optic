@@ -155,7 +155,7 @@ export function CaptureManagerPage(props) {
   );
 }
 
-export const CaptureManager = ({location}) => {
+export const CaptureManager = ({ location }) => {
   const classes = useStyles();
   const routerPaths = useRouterPaths();
   const { captures } = useContext(AllCapturesContext);
@@ -214,8 +214,8 @@ function CaptureChooserComponent(props) {
   );
 
   const query = qs.parse(props.location.search, {
-    ignoreQueryPrefix: true
-  })
+    ignoreQueryPrefix: true,
+  });
 
   let defaultTab = subtabs.ENDPOINT_DIFF;
 
@@ -250,6 +250,9 @@ function CaptureChooserComponent(props) {
     window.location.reload();
   }
 
+  const showNewCaptureMode =
+    process.env.REACT_APP_GITFLOW_CAPTURE && !captureId.startsWith('uuid-');
+
   return (
     <div className={classes.container}>
       <div className={classes.navigationContainer}>
@@ -258,42 +261,47 @@ function CaptureChooserComponent(props) {
             <FiberManualRecordIcon
               color="secondary"
               fontSize="small"
-              style={{ marginRight: 10 }}
+              style={{ marginRight: 10, fontSize: 14 }}
             />
             <Typography variant="h6" style={{ fontSize: 19 }}>
               Local Capture
             </Typography>
           </div>
 
-          <FormControl className={classes.formControl} fullWidth>
-            <Select
-              size="small"
-              placeholder="Select Capture"
-              value={captureId}
-              onChange={handleChange}
-            >
-              {captureContext.captures.map((capture, index) => {
-                return (
-                  <MenuItem value={capture.captureId} key={capture.captureId}>
-                    <ListItemText
-                      primary={`${time.ago(capture.lastUpdate)} ${
-                        index === 0 ? '(LATEST) ' : ''
-                      } `}
-                    />
-                    <ListItemSecondaryAction>
-                      {capture.hasDiff && (
-                        <WarningIcon
-                          fontSize="small"
-                          color="secondary"
-                          style={{ marginRight: 8, paddingTop: 5 }}
-                        />
-                      )}
-                    </ListItemSecondaryAction>
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
+          {showNewCaptureMode && (
+            <div className={classes.formControl2}>
+              <Typography variant="caption" className={classes.lastCommitText}>
+                Since last commit:{' '}
+              </Typography>
+              <Typography variant="caption" style={{ fontWeight: 300 }}>
+                {captureId.substr(0, 7)}
+                ea7272a
+              </Typography>
+            </div>
+          )}
+
+          {!showNewCaptureMode && (
+            <FormControl className={classes.formControl} fullWidth>
+              <Select
+                size="small"
+                placeholder="Select Capture"
+                value={captureId}
+                onChange={handleChange}
+              >
+                {captureContext.captures.map((capture, index) => {
+                  return (
+                    <MenuItem value={capture.captureId} key={capture.captureId}>
+                      <ListItemText
+                        primary={`${time.ago(capture.lastUpdate)} ${
+                          index === 0 ? '(LATEST) ' : ''
+                        } `}
+                      />
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          )}
 
           <DocDivider style={{ marginTop: 22, marginBottom: 15 }} />
 
@@ -371,7 +379,10 @@ function CaptureDiffWrapper(props) {
           ignoredDiffs={ignoredDiffs}
           {...services}
         >
-          <CaptureChooserComponent location={props.location} captureId={captureId} />
+          <CaptureChooserComponent
+            location={props.location}
+            captureId={captureId}
+          />
         </CaptureContextStore>
       )}
     </IgnoreDiffContext.Consumer>
@@ -712,8 +723,16 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     margin: theme.spacing(2),
   },
+  lastCommitText: {
+    color: DocDarkGrey,
+    fontWeight: 100,
+  },
   formControl: {
     paddingLeft: 35,
+    paddingRight: 15,
+  },
+  formControl2: {
+    paddingLeft: 20,
     paddingRight: 15,
   },
   selectEmpty: {
