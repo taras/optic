@@ -14,7 +14,7 @@ import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import findProcess from 'find-process';
 import stripAnsi from 'strip-ansi';
 // @ts-ignore
-import gitRev from 'git-rev-sync';
+import gitRev from '../shared/git/git-rev-sync-insourced';
 import {
   ExitedTaskWithLocalCli,
   StartedTaskWithLocalCli,
