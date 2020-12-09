@@ -39,11 +39,10 @@ export function SetupPage(props) {
     newSetupAndCheckMachine(focusTask, specService)
   );
 
-  useLatestEvent((latest) => {
-    if (latest.type === ApiCheckCompleted.eventName) {
-      send({ type: 'CHECK_RESULT_RECEIVED', result: latest.data });
-    }
-  }, events);
+  useEffect(() => {
+    window.Intercom &&
+      window.Intercom('update', { hide_default_launcher: false });
+  });
 
   const {
     stagedRanges,
@@ -54,6 +53,15 @@ export function SetupPage(props) {
     lastKnownSavedConfig,
     checkCount,
   } = state.context;
+
+  useLatestEvent((latest) => {
+    if (latest.type === ApiCheckCompleted.eventName) {
+      send({ type: 'CHECK_RESULT_RECEIVED', result: latest.data });
+      if (checkCount === 2 && !latest.data.passed) {
+        window.Intercom && window.Intercom('showNewMessage', 'Need help?');
+      }
+    }
+  }, events);
 
   const noChecks = !Boolean(lastCheckResult);
 

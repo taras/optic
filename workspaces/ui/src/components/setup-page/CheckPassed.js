@@ -42,9 +42,7 @@ export function CheckPassed(props) {
       try {
         const status = await specService.getCaptureStatus(started.captureId);
         setCounter(status.interactionsCount);
-      } catch(e) {
-
-      }
+      } catch (e) {}
     }
   }, 1500);
 
@@ -70,9 +68,9 @@ export function CheckPassed(props) {
               <Code>
                 {started.inputs['serviceConfig.protocol']}
                 {'//'}
-                {started.inputs['serviceConfig.host']}
+                {started.inputs['proxyConfig.host']}
                 {':'}
-                {started.inputs['serviceConfig.port']}
+                {started.inputs['proxyConfig.port']}
               </Code>
             </Typography>
             <Typography
@@ -109,7 +107,7 @@ export function CheckPassed(props) {
                   Start Documenting
                 </Button>
               </>
-            ): null }
+            ) : null}
           </>
         ) : (
           <Typography
