@@ -33,6 +33,7 @@ import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-v
 import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
 import { IDiff } from '@useoptic/cli-shared/build/diffs/diffs';
 import cytoscape from 'cytoscape';
+import { makeSpectacle } from '../../spectacle/main';
 
 export class ExampleDiff {
   private diffId?: any;
@@ -42,46 +43,11 @@ export class ExampleDiff {
     const spec = DiffEngine.spec_from_events(JSON.stringify(events));
     this.diffId = uuidv4();
 
-    const graph = JSON.parse(DiffEngine.get_endpoints_projection(spec));
-    console.log(graph);
-    const cytoscapeContext = cytoscape({
-      container: document.getElementById('cytoscape-root'),
+    const spectacle = makeSpectacle({
+      specEvents: events,
     });
-    graph.nodes.forEach((node, i) => {
-      cytoscapeContext.add({
-        group: 'nodes',
-        data: {
-          id: i,
-          node,
-        },
-        // position: {
-        //   x: Math.random() * 300,
-        //   y: Math.random() * 300,
-        // },
-      });
-    });
-    graph.edges.forEach((edge, i) => {
-      const [source, target, value] = edge;
-      cytoscapeContext.add({
-        group: 'edges',
-        data: {
-          id: `edge${i}`,
-          source,
-          target,
-          edge: value,
-        },
-      });
-    });
-    cytoscapeContext.on('click', 'node', function (evt) {
-      console.log('clicked ' + this.id());
-      console.log(this.data());
-      debugger;
-    });
-    cytoscapeContext
-      .layout({
-        name: 'breadthfirst',
-      })
-      .run();
+    // @ts-ignore
+    global.spectacle = spectacle;
     debugger;
 
     const diffingStream = (async function* (): AsyncIterable<
@@ -111,8 +77,7 @@ export class ExampleDiff {
     })();
 
     // Consume stream instantly for now, resulting in a Promise that resolves once exhausted
-    // this.diffing = AsyncTools.toArray(diffingStream);
-    this.diffing = Promise.resolve([]);
+    this.diffing = AsyncTools.toArray(diffingStream);
     return this.diffId;
   }
 
