@@ -8,6 +8,7 @@ import { ApiPage } from './components/api-page/ApiPage';
 import { SetupPage } from './components/setup-page/SetupPage';
 import { ReviewDiffPage } from './components/diff/review-diff/ReviewDiffPage';
 import { FinalizeSummaryContextStore } from './components/diff/review-diff/FinalizeSummaryContext';
+import { SpectacleGraphiql } from './spectacle/SpectacleGraphiql';
 
 const TestingDashboardLoader = React.lazy(() =>
   import('./components/loaders/TestingDashboardLoader')
@@ -39,6 +40,11 @@ export function ApiRoutes(props) {
             strict
             path={routerPaths.reviewRoot}
             component={ReviewDiffPage}
+          />
+          <Route
+            strict
+            path={routerPaths.spectacleRoot}
+            component={SpectacleGraphiql}
           />
           <Redirect to={defaultRoute} />
         </Switch>

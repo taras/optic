@@ -17,6 +17,7 @@ const routerPaths = {
   captureRoot: (base = '') => `${routerPaths.diffsRoot(base)}/:captureId`,
   captureRequestDiffsRoot: (base = '') =>
     `${routerPaths.captureRoot(base)}/paths/:pathId/methods/:method`,
+  spectacleRoot: (base = '') => `${base}/spectacle`,
 };
 
 export function useRouterPaths() {
