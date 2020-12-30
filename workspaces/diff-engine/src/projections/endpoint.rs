@@ -6,29 +6,29 @@ use std::collections::HashMap;
 
 pub const ROOT_PATH_ID: &str = "root";
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize)]
 pub struct PathComponentDescriptor {
   pub is_parameter: bool,
   pub name: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize)]
 pub struct BodyDescriptor {
   pub http_content_type: HttpContentType,
   pub root_shape_id: ShapeId,
 }
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize)]
 pub struct RequestBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize)]
 pub struct ResponseBodyDescriptor {
   pub body: Option<BodyDescriptor>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize)]
 pub enum Node {
   PathComponent(PathComponentId, PathComponentDescriptor),
   HttpMethod(HttpMethod),
@@ -37,7 +37,7 @@ pub enum Node {
   Response(ResponseId, ResponseBodyDescriptor),
 }
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize)]
 pub enum Edge {
   IsChildOf,
 }
