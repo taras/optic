@@ -15,6 +15,8 @@ pub use cqrs_core::Aggregate;
 pub use events::{HttpInteraction, SpecChunkEvent, SpecEvent};
 pub use interactions::diff as diff_interaction;
 pub use interactions::result::InteractionDiffResult;
+pub use projections::endpoint::Edge as EndpointsProjectionEdge;
+pub use projections::endpoint::Node as EndpointsProjectionNode;
 pub use projections::{
   EndpointProjection, ShapeProjection, SpecAssemblerProjection, SpecProjection,
 };

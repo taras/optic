@@ -26,12 +26,16 @@ pub fn diff_interaction(
   let interaction: HttpInteraction = serde_json::from_str(&interaction_json).unwrap();
 
   let results: Vec<ResultContainer<InteractionDiffResult>> = spec
-    .diff_interaction(interaction)
-    .into_iter()
-    .map(|result| result.into())
-    .collect();
+      .diff_interaction(interaction)
+      .into_iter()
+      .map(|result| result.into())
+      .collect();
 
   Ok(serde_json::to_string(&results).unwrap())
+}
+#[wasm_bindgen]
+pub fn get_endpoints_projection(spec: WasmSpecProjection) -> Result<String, JsValue> {
+  spec.endpoints_projection()
 }
 
 #[wasm_bindgen]
@@ -42,6 +46,11 @@ pub struct WasmSpecProjection {
 impl WasmSpecProjection {
   pub fn diff_interaction(&self, interaction: HttpInteraction) -> Vec<InteractionDiffResult> {
     optic_diff_engine::diff_interaction(&self.projection, interaction)
+  }
+
+  pub fn endpoints_projection(self) -> Result<String, JsValue> {
+    let serializable = self.projection.endpoints_serializable();
+    Ok(serde_json::to_string(&serializable).unwrap())
   }
 }
 
@@ -60,3 +69,5 @@ impl From<InteractionDiffResult> for ResultContainer<InteractionDiffResult> {
     Self(result, fingerprint)
   }
 }
+
+

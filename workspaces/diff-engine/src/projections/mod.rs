@@ -7,6 +7,7 @@ pub use shape::ShapeProjection;
 pub use spec_events::{SpecAssemblerError, SpecAssemblerProjection};
 
 use crate::events::SpecEvent;
+use crate::{EndpointsProjectionEdge, EndpointsProjectionNode};
 use cqrs_core::{Aggregate, AggregateEvent};
 
 #[derive(Debug)]
@@ -24,9 +25,31 @@ impl Default for SpecProjection {
   }
 }
 
+#[derive(Debug, serde::Serialize)]
+pub struct GraphNodesAndEdges<N, E> {
+  nodes: Vec<N>,
+  edges: Vec<(usize, usize, E)>,
+}
+
+type SerializableGraph = GraphNodesAndEdges<EndpointsProjectionNode, EndpointsProjectionEdge>;
+impl From<EndpointProjection> for SerializableGraph {
+  fn from(endpoint_projection: EndpointProjection) -> Self {
+
+    let (graph_nodes, graph_edges) =  endpoint_projection.graph.into_nodes_edges();
+    let nodes = graph_nodes.into_iter().map(|x| x.weight).collect();
+    let edges = graph_edges.into_iter().map(|x| (x.source().index(), x.target().index(), x.weight)).collect();
+    let value: GraphNodesAndEdges<EndpointsProjectionNode, EndpointsProjectionEdge> =
+      GraphNodesAndEdges { nodes, edges };
+    value
+  }
+}
+
 impl SpecProjection {
   pub fn endpoint(&self) -> &EndpointProjection {
     &self.endpoint
+  }
+  pub fn endpoints_serializable(self) -> SerializableGraph {
+    self.endpoint.into()
   }
 
   pub fn shape(&self) -> &ShapeProjection {
