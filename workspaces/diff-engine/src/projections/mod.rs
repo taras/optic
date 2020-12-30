@@ -36,7 +36,9 @@ impl From<EndpointProjection> for SerializableGraph {
   fn from(endpoint_projection: EndpointProjection) -> Self {
 
     let (graph_nodes, graph_edges) =  endpoint_projection.graph.into_nodes_edges();
+    //@TODO include node id
     let nodes = graph_nodes.into_iter().map(|x| x.weight).collect();
+    //@TODO map index to id
     let edges = graph_edges.into_iter().map(|x| (x.source().index(), x.target().index(), x.weight)).collect();
     let value: GraphNodesAndEdges<EndpointsProjectionNode, EndpointsProjectionEdge> =
       GraphNodesAndEdges { nodes, edges };
