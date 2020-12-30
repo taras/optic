@@ -1,8 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { RfcContext } from '../contexts/RfcContext';
 import Graphiql from 'graphiql';
-import { buildSchema } from 'graphql';
-import { schema } from './graphql/schema';
 
 export function SpectacleGraphiql() {
   const rfcContext = useContext(RfcContext);
@@ -14,27 +12,31 @@ export function SpectacleGraphiql() {
     let task = async () => {
       const { makeSpectacle } = await import('./main.ts');
       const spectacle = makeSpectacle({ specEvents: events });
-      global.spectacle = spectacle;
-      setSpectacle(spectacle);
+      global._spectacle = spectacle;
+      debugger;
+      //@GOTCHA: useState treats function arguments differently
+      setSpectacle(() => spectacle);
     };
 
     task();
   }, []);
 
+  console.log(spectacle);
+  debugger;
   if (!spectacle) {
     return <div>loading...</div>;
   }
-  window.spectacle({ query: `query {endpoints{httpMethod}}` });
+  //spectacle({ query: `query {endpoints{httpMethod}}` });
   return (
     <div style={{ height: '100vh' }}>
-      {/*<Graphiql*/}
-      {/*  fetcher={(graphQlParameters) => {*/}
-      {/*    console.log(graphQlParameters);*/}
-
-      {/*    return spectacle(graphQlParameters);*/}
-      {/*  }}*/}
-      {/*  // schema={buildSchema(schema)}*/}
-      {/*/>*/}
+      <Graphiql
+        fetcher={(graphQlParameters) => {
+          console.log(graphQlParameters);
+          console.log(spectacle, global._spectacle);
+          return spectacle(graphQlParameters);
+        }}
+        // schema={buildSchema(schema)}
+      />
     </div>
   );
 }

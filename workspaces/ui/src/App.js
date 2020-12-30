@@ -32,6 +32,7 @@ class App extends React.Component {
         <div
           id="cytoscape-root"
           style={{
+            display: 'none', // toggle me to enable visualization
             position: 'absolute',
             top: 0,
             left: 0,

@@ -82,9 +82,6 @@ export function makeSpectacle(opticContext: IOpticContext) {
           context,
           info,
         });
-        debugger;
-
-        debugger;
         return Promise.resolve([{ httpMethod: 'get' }]);
       },
     },
@@ -98,16 +95,11 @@ export function makeSpectacle(opticContext: IOpticContext) {
     resolvers,
   });
 
-  return function (
-    input: null | {
-      operationName: string;
-      query: string;
-      variables: any;
-    }
-  ) {
-    if (input === null) {
-      return introspectionFromSchema(buildSchema(schema));
-    }
+  return function (input: {
+    operationName: string;
+    query: string;
+    variables: any;
+  }) {
     return graphql({
       schema: executableSchema,
       source: input.query,

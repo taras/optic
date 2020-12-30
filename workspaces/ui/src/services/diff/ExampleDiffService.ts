@@ -32,7 +32,6 @@ import { localInitialBodyLearner } from '../../components/diff/review-diff/learn
 import { IDiff } from '../../engine/interfaces/diffs';
 import { localTrailValuesLearner } from '../../engine/async-work/browser-trail-values';
 import { AsyncTools, Streams } from '@useoptic/diff-engine-wasm';
-import { makeSpectacle } from '../../spectacle/main';
 
 export class ExampleDiff {
   private diffId?: any;
@@ -41,13 +40,6 @@ export class ExampleDiff {
   start(events: any[], interactions: any[]) {
     const spec = DiffEngine.spec_from_events(JSON.stringify(events));
     this.diffId = uuidv4();
-
-    const spectacle = makeSpectacle({
-      specEvents: events,
-    });
-    // @ts-ignore
-    global.spectacle = spectacle;
-    debugger;
 
     const diffingStream = (async function* (): AsyncIterable<
       Streams.DiffResults.DiffResult
