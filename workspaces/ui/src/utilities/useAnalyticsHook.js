@@ -101,6 +101,7 @@ export function AnalyticsContextStore({ children, specService }) {
   }, [userPromise, apiName]);
 
   const track = async (event) => {
+    console.log(event);
     if (apiName) {
       analyticsEvents.emit(event);
     }

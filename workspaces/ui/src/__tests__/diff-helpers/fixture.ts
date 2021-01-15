@@ -26,7 +26,7 @@ import {
 } from '@useoptic/cli-shared/build/diffs/initial-types';
 import { IDiff } from '../../engine/interfaces/diffs';
 import { universeFromEvents } from '@useoptic/domain-utilities';
-import * as DiffEngine from '../../../../diff-engine-wasm/engine/build';
+import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 
 interface ITestUniverse {
   rfcBaseState: DiffRfcBaseState;
