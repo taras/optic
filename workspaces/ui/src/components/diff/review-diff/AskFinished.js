@@ -82,7 +82,7 @@ export function AskFinished(props) {
         endpointsWithChanges: endpointsWithChanges.length,
       });
 
-      if (process.env.REACT_APP_OPTIC_ASSEMBLED_SPEC_EVENTS) {
+      if (process.env.REACT_APP_OPTIC_ASSEMBLED_SPEC_EVENTS === 'true') {
         await specService.saveBatchCommit(newEvents);
       } else {
         await specService.saveEventsArray(updatedEvents);
