@@ -1,5 +1,10 @@
 import { expose } from 'threads/worker';
-import { opticEngine, RfcCommandContext, JsonHelper } from '@useoptic/domain';
+import {
+  opticEngine,
+  RfcCommandContext,
+  JsonHelper,
+  toOption,
+} from '@useoptic/domain';
 import { universeFromEventsAndAdditionalCommands } from '@useoptic/domain-utilities';
 
 expose({
@@ -35,11 +40,20 @@ function handleCommands(
 
   const parsedEvents = JSON.parse(eventString);
 
+  const lastStarted = parsedEvents
+    .reverse()
+    .find((i) => i['BatchCommitStarted']);
+
+  const parentId =
+    lastStarted && lastStarted.parentId ? lastStarted.parentId : 'root';
+
+  console.log(parentId);
+
   const {
     rfcId,
     eventStore,
   } = universeFromEventsAndAdditionalCommands(parsedEvents, commandContext, [
-    StartBatchCommit(batchId, commitMessage),
+    StartBatchCommit(batchId, commitMessage, toOption(parentId)),
     ...inputCommands,
     EndBatchCommit(batchId),
   ]);
