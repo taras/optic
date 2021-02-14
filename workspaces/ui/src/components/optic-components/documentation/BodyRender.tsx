@@ -1,0 +1,83 @@
+import React, { useEffect, useRef, useState } from 'react';
+import makeStyles from '@material-ui/styles/makeStyles';
+import { Paper } from '@material-ui/core';
+import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
+import { RenderRootShape, ShapeRowBase } from '../shapes/ShapeRowBase';
+import { ShapeRenderStore } from '../shapes/ShapeRenderContext';
+import { ChoiceTabs } from '../shapes/OneOfTabs';
+
+export type BodyRenderProps = {
+  shape: IShapeRenderer;
+  location: string;
+};
+
+export function BodyRender(props: BodyRenderProps) {
+  const classes = useStyles();
+  const [showExample, setValue] = useState('example');
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    contentRef.current.scrollTop = 0;
+  }, [showExample]);
+
+  return (
+    <div className={classes.wrapper}>
+      <div className={classes.header}>
+        <div>200 Response</div>
+        <div style={{ flex: 1 }} />
+        <ChoiceTabs
+          value={showExample}
+          setValue={setValue}
+          choices={[
+            { label: 'example', id: 'example' },
+            { label: 'shape', id: 'shape' },
+          ]}
+        />
+      </div>
+      <div className={classes.content} ref={contentRef}>
+        <ShapeRenderStore showExamples={showExample === 'example'}>
+          <RenderRootShape shape={props.shape} />
+        </ShapeRenderStore>
+      </div>
+    </div>
+  );
+}
+
+const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    overflow: 'hidden',
+    backgroundColor: '#f8fafc',
+  },
+  headerRegion: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  content: {
+    paddingTop: 8,
+    paddingBottom: 8,
+    borderTop: 'none',
+    maxHeight: '80vh',
+    overflowY: 'scroll',
+    borderLeft: '1px solid #e4e8ed',
+    borderRight: '1px solid #e4e8ed',
+    borderBottom: '1px solid #e4e8ed',
+    borderBottomRightRadius: 4,
+    borderBottomLeftRadius: 4,
+  },
+  header: {
+    backgroundColor: '#e4e8ed',
+    color: '#4f566b',
+    flex: 1,
+    fontSize: 14,
+    height: 35,
+    display: 'flex',
+    fontWeight: 400,
+    paddingLeft: 13,
+    fontFamily: 'Roboto',
+    alignItems: 'center',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    overflow: 'hidden',
+    borderBottom: '1px solid #e2e2e2',
+  },
+}));

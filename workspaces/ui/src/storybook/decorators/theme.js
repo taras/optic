@@ -10,8 +10,10 @@ export default function theme(story) {
 function ThemeDecorator({ story }) {
   return (
     <React.Fragment>
-      <CssBaseline />
-      <ThemeProvider theme={appTheme}>{story()}</ThemeProvider>
+      <div>
+        <CssBaseline />
+        <ThemeProvider theme={appTheme}>{story()}</ThemeProvider>
+      </div>
     </React.Fragment>
   );
 }
