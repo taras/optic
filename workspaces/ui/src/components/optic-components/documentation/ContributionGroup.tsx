@@ -7,6 +7,7 @@ import {
   Paper,
   Switch,
   TextField,
+  Typography,
 } from '@material-ui/core';
 import { IShapeRenderer } from '../shapes/ShapeRenderInterfaces';
 import { RenderRootShape, ShapeRowBase } from '../shapes/ShapeRowBase';
@@ -26,7 +27,6 @@ export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const updateContribution = (key: string, value: string) => {
-    debugger;
     setOverrideContributions((i) => ({ ...i, [key]: value }));
   };
 
@@ -34,6 +34,11 @@ export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
     <ContributionGroupContext.Provider value={{ isEditing }}>
       <DepthStore depth={0}>
         <div className={classes.edit}>
+          <Typography variant="h6" style={{ fontSize: 24 }}>
+            200 Response
+          </Typography>
+
+          <div style={{ flex: 1 }} />
           <ChoiceSwitch
             active={isEditing}
             setActive={() => setIsEditing(!isEditing)}
@@ -102,11 +107,7 @@ function createFlatList(
       });
     }
     if (shape.asArray) {
-      shape.asArray.listItem.forEach((field) => {
-        contributions.push(
-          ...createFlatList(field.asArray.listItem, depth + 1)
-        );
-      });
+      contributions.push(...createFlatList(shape.asArray.listItem, depth + 1));
     }
   });
 
@@ -117,6 +118,8 @@ const useStyles = makeStyles((theme) => ({
   container: {},
   edit: {
     display: 'flex',
+    alignItems: 'center',
     justifyContent: 'flex-end',
+    paddingBottom: 20,
   },
 }));

@@ -35,7 +35,7 @@ export const methodColorsDark = {
   POST: '#264859',
   PUT: '#69340a',
   PATCH: '#796384',
-  DELETE: '#634444',
+  DELETE: '#be5353',
 };
 
 export const appTheme = createMuiTheme({

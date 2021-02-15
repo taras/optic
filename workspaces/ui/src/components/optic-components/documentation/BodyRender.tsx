@@ -23,7 +23,7 @@ export function BodyRender(props: BodyRenderProps) {
   return (
     <div className={classes.wrapper}>
       <div className={classes.header}>
-        <div>200 Response</div>
+        <div>{props.location}</div>
         <div style={{ flex: 1 }} />
         <ChoiceTabs
           value={showExample}

@@ -6,20 +6,29 @@ import { RenderRootShape } from '../../../../components/optic-components/shapes/
 import { BodyRender } from '../../../../components/optic-components/documentation/BodyRender';
 import { ContributionGroup } from '../../../../components/optic-components/documentation/ContributionGroup';
 import { TwoColumn } from '../../../../components/optic-components/documentation/TwoColumn';
+import { EndpointName } from '../../../../components/optic-components/documentation/EndpointName';
 
 export default {
-  title: 'Documentation/Body Columns',
+  title: 'Documentation/Endpoints',
   decorators: [theme],
 };
 
-export function BodyColumns() {
+const examples = [
+  { method: 'GET', fullPath: '/todos/:todoId' },
+  { method: 'POST', fullPath: '/todos/:todoId' },
+  { method: 'PUT', fullPath: '/todos/:todoId' },
+  { method: 'OPTIONS', fullPath: '/todos/:todoId' },
+  { method: 'GET', fullPath: '/repos/:repoId/contents' },
+  { method: 'DELETE', fullPath: '/user/:userId/role/:roleId' },
+];
+
+export function EndpointNameCards() {
   const example = shapeExamples[3];
   return (
     <div style={{ padding: 20 }}>
-      <TwoColumn
-        left={<ContributionGroup rootShape={[example]} />}
-        right={<BodyRender location="application/json" shape={example} />}
-      />
+      {examples.map((i, index) => {
+        return <EndpointName key={index} {...i} fontSize={15} />;
+      })}
     </div>
   );
 }

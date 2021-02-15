@@ -45,6 +45,7 @@
     "mini-css-extract-plugin": "0.5.0",
     "node-sha1": "^1.0.1",
     "notistack": "^0.8.6",
+    "pad-left": "^2.1.0",
     "path-to-regexp": "^3.0.0",
     "prop-types": "latest",
     "qs": "^6.9.4",

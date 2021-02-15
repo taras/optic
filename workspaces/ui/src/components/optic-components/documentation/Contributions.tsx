@@ -29,7 +29,7 @@ export function FieldOrParameterContribution({
 
   const { isEditing } = useContributionGroup();
 
-  const debouncedDescription = useDebounce(description, 1500);
+  const debouncedDescription = useDebounce(description, 500);
 
   useEffect(() => {
     if (debouncedDescription) {
@@ -40,13 +40,14 @@ export function FieldOrParameterContribution({
   return (
     <div className={classes.container} style={{ paddingLeft: depth * 14 }}>
       <div className={classes.topRow}>
-        <span className={classes.keyName}>{name}</span>
-        <span className={classes.shape}>{summarizeTypes(shapes)}</span>
+        <div className={classes.keyName}>{name}</div>
+        <div className={classes.shape}>{summarizeTypes(shapes)}</div>
       </div>
       {isEditing ? (
         <TextField
           inputProps={{ className: classes.description }}
           fullWidth
+          placeholder={`What is ${name}? How is it used?`}
           multiline
           value={description}
           onChange={(e) => {
@@ -74,13 +75,13 @@ const useStyles = makeStyles((theme) => ({
   container: {
     marginBottom: 9,
     paddingLeft: 3,
-    borderTop: '1px solid #e2e2e2',
+    borderTop: '1px solid #e4e8ed',
   },
   keyName: {
     color: '#3c4257',
     fontWeight: 600,
     fontSize: 13,
-    fontFamily: 'Ubuntu Mono',
+    fontFamily: 'Ubuntu',
   },
   description: {
     fontFamily: 'Ubuntu',
@@ -90,11 +91,15 @@ const useStyles = makeStyles((theme) => ({
     color: '#4f566b',
   },
   shape: {
-    marginLeft: 5,
-    fontFamily: 'Roboto',
+    marginLeft: 6,
+    fontFamily: 'Ubuntu Mono',
     fontSize: 12,
     fontWeight: 400,
     color: '#8792a2',
+    height: 18,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   topRow: {
     display: 'flex',
