@@ -21,7 +21,7 @@ tasks:
       - task: :workspaces:build
         env:
           FLAGS_FILE: '{{.FLAGS_FILE}}'
-      - :verdaccio:up
+      #- :verdaccio:up
     cmds:
       - rm -rf {{.TMP_DIR}} && mkdir -p {{.TMP_DIR}}
       - task: publish-local
