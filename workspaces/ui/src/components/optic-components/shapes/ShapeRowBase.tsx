@@ -12,11 +12,21 @@ import classNames from 'classnames';
 import { useShapeRenderContext } from './ShapeRenderContext';
 import { OneOfTabs } from './OneOfTabs';
 
-type ShapeRowBaseProps = { children: any; depth: number; style?: any };
+type ShapeRowBaseProps = {
+  children: any;
+  depth: number;
+  style?: any;
+  added?: boolean;
+  changed?: boolean;
+  removed?: boolean;
+};
 export const ShapeRowBase = ({
   children,
   depth = 0,
   style,
+  added,
+  changed,
+  removed,
 }: ShapeRowBaseProps) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
@@ -26,7 +36,12 @@ export const ShapeRowBase = ({
       className={classNames(classes.rowWrap, { [classes.allowHover]: false })}
     >
       <div
-        className={classes.row}
+        className={classNames(
+          classes.row,
+          { [sharedClasses.added]: added },
+          { [sharedClasses.removed]: removed },
+          { [sharedClasses.changed]: changed }
+        )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
         {children}
@@ -39,13 +54,16 @@ export const RenderField = ({
   fieldKey,
   shapeRenderers,
   required,
+  changelog,
 }: IFieldRenderer) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
   const { Indent, depth } = useDepth();
 
+  console.log(changelog);
+
   return [
-    <ShapeRowBase depth={depth}>
+    <ShapeRowBase depth={depth} {...changelog}>
       <span className={sharedClasses.shapeFont}>"{fieldKey}"</span>
       <span className={sharedClasses.symbolFont}>: </span>
       <RenderFieldLeadingValue shapeRenderers={shapeRenderers} />

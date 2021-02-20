@@ -22,6 +22,9 @@ export const shapeExamples = [
           fieldId: makeid(6),
           description: 'this is the street where it happens',
           required: true,
+          changelog: {
+            added: true,
+          },
           shapeRenderers: [
             {
               shapeId: makeid(6),
@@ -35,6 +38,9 @@ export const shapeExamples = [
           fieldId: makeid(6),
           description: '',
           required: true,
+          changelog: {
+            removed: true,
+          },
           shapeRenderers: [
             {
               shapeId: makeid(6),
@@ -72,6 +78,10 @@ export const shapeExamples = [
                     fieldId: makeid(6),
                     description: 'can it be returned by a date',
                     required: true,
+                    changelog: {
+                      changed: true,
+                      previousType: JsonLike.STRING,
+                    },
                     shapeRenderers: [
                       {
                         shapeId: makeid(6),

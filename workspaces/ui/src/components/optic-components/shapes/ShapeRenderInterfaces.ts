@@ -4,6 +4,7 @@ export interface IFieldRenderer {
   shapeRenderers: IShapeRenderer[];
   required: boolean;
   description?: string;
+  changelog?: IChangeLog;
 }
 
 export interface IShapeRenderer {
@@ -12,6 +13,7 @@ export interface IShapeRenderer {
   asArray?: IArrayRender;
   asObject?: IObjectRender;
   value: any;
+  changelog?: IChangeLog;
 }
 
 export interface IArrayRender {
@@ -31,4 +33,11 @@ export enum JsonLike {
   BOOLEAN = 'BOOLEAN',
 }
 
-///////////////////////////////////////////////
+/// Changelog Types
+interface IChangeLog {
+  added?: boolean;
+  removed?: boolean;
+  changed?: {
+    previousType: JsonLike;
+  };
+}

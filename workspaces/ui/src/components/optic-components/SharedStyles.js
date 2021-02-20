@@ -1,4 +1,12 @@
 import makeStyles from '@material-ui/styles/makeStyles';
+import {
+  AddedGreen,
+  AddedGreenBackground,
+  ChangedYellow,
+  ChangedYellowBackground,
+  RemovedRed,
+  RemovedRedBackground,
+} from '../../theme';
 
 export const useSharedStyles = makeStyles((theme) => ({
   shapeFont: {
@@ -18,6 +26,15 @@ export const useSharedStyles = makeStyles((theme) => ({
     fontFamily: 'Ubuntu Mono',
     fontWeight: 400,
     color: sharedColor.colonColor,
+  },
+  added: {
+    backgroundColor: `${AddedGreenBackground} !important`,
+  },
+  changed: {
+    backgroundColor: `${ChangedYellowBackground} !important`,
+  },
+  removed: {
+    backgroundColor: `${RemovedRedBackground} !important`,
   },
 }));
 
