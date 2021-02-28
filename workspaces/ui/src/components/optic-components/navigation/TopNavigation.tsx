@@ -3,16 +3,21 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { SubtleBlueBackground } from '../../../theme';
-import { Button } from '@material-ui/core';
+import { SubtleBlueBackground, SubtleGreyBackground } from '../../../theme';
+import { Button, SvgIcon } from '@material-ui/core';
+import SubjectIcon from '@material-ui/icons/Subject';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import DescriptionIcon from '@material-ui/icons/Description';
+import ForumIcon from '@material-ui/icons/Forum';
+import ImportExportIcon from '@material-ui/icons/ImportExport';
 import { NavButton } from './NavButton';
+import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 
 export function TopNavigation(props) {
   const classes = useStyles();
   return (
     <div className={classes.root} key="top-navigation">
-      <AppBar position="static" color="transparent" elevation={1}>
+      <AppBar position="static" color="transparent" elevation={0}>
         <Toolbar className={classes.toolbar}>
           <div className={classes.stacked}>
             <Typography
@@ -21,12 +26,12 @@ export function TopNavigation(props) {
               noWrap
               component="span"
             >
-              optic/backend-v1
+              netpulse
             </Typography>
 
-            <NavButton />
-
-            <Button size="small">Diffs</Button>
+            <NavButton title="Docs" Icon={SubjectIcon} />
+            <NavButton title="Diffs" Icon={ChangeHistoryIcon} />
+            <NavButton title="Team" Icon={ImportExportIcon} />
           </div>
           <div className={classes.spacer} />
           <div>{props.controls}</div>
@@ -41,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     height: '40px !important',
     minHeight: 'auto !important',
     zIndex: 1000,
+    borderBottom: `1px solid ${SubtleGreyBackground}`,
     backgroundColor: SubtleBlueBackground,
   },
   toolbar: {
@@ -55,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     fontSize: 16,
+    marginRight: 10,
     color: '#4f566b',
   },
   stacked: {
