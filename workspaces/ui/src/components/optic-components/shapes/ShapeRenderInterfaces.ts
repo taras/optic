@@ -34,7 +34,7 @@ export enum JsonLike {
 }
 
 /// Changelog Types
-interface IChangeLog {
+export interface IChangeLog {
   added?: boolean;
   removed?: boolean;
   changed?: {

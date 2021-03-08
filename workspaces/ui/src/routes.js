@@ -6,6 +6,8 @@ import Loading from './components/navigation/Loading';
 import { SetupPage } from './components/setup-page/SetupPage';
 import { ReviewDiffPage } from './components/diff/review-diff/ReviewDiffPage';
 import { FinalizeSummaryContextStore } from './components/diff/review-diff/FinalizeSummaryContext';
+import { NavigationRoute } from './components/optic-components/navigation/NavigationRoute';
+import { DocumentationPages } from './components/optic-components/pages/DocumentationPage';
 
 const TestingDashboardLoader = React.lazy(() =>
   import('./components/loaders/TestingDashboardLoader')
@@ -21,20 +23,34 @@ export function ApiRoutes(props) {
     ? props.getDefaultRoute(routerPaths)
     : routerPaths.docsRoot;
 
+  const showNewUI = true;
+
   return (
     <FinalizeSummaryContextStore>
       <Suspense fallback={<Loading />}>
-        <Switch>
-          {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
-          <Route exact path={routerPaths.setup} component={SetupPage} />
-          <Route path={routerPaths.docsRoot} component={DocsPage} />
-          <Route
-            strict
-            path={routerPaths.reviewRoot}
-            component={ReviewDiffPage}
-          />
-          <Redirect to={defaultRoute} />
-        </Switch>
+        {showNewUI ? (
+          <Switch>
+            {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
+            {/*<Route*/}
+            {/*  path={routerPaths.docsRoot}*/}
+            {/*  component={<div>POWDER WIG</div>}*/}
+            {/*/>*/}
+            <DocumentationPages />
+            <Redirect to={defaultRoute} />
+          </Switch>
+        ) : (
+          <Switch>
+            {/*<Route strict path={routerPaths.dashboardRoot} component={ApiPage} />*/}
+            <Route exact path={routerPaths.setup} component={SetupPage} />
+            <Route path={routerPaths.docsRoot} component={DocsPage} />
+            <Route
+              strict
+              path={routerPaths.reviewRoot}
+              component={ReviewDiffPage}
+            />
+            <Redirect to={defaultRoute} />
+          </Switch>
+        )}
       </Suspense>
     </FinalizeSummaryContextStore>
   );

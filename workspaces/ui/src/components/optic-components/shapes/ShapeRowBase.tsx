@@ -2,6 +2,7 @@ import React from 'react';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useSharedStyles, IndentSpaces } from '../SharedStyles';
 import {
+  IChangeLog,
   IFieldRenderer,
   IShapeRenderer,
   JsonLike,
@@ -16,17 +17,13 @@ type ShapeRowBaseProps = {
   children: any;
   depth: number;
   style?: any;
-  added?: boolean;
-  changed?: boolean;
-  removed?: boolean;
+  changelog?: IChangeLog;
 };
 export const ShapeRowBase = ({
   children,
   depth = 0,
   style,
-  added,
-  changed,
-  removed,
+  changelog,
 }: ShapeRowBaseProps) => {
   const classes = useStyles();
   const sharedClasses = useSharedStyles();
@@ -38,9 +35,9 @@ export const ShapeRowBase = ({
       <div
         className={classNames(
           classes.row,
-          { [sharedClasses.added]: added },
-          { [sharedClasses.removed]: removed },
-          { [sharedClasses.changed]: changed }
+          { [sharedClasses.added]: changelog && changelog.added },
+          { [sharedClasses.removed]: changelog && changelog.removed },
+          { [sharedClasses.changed]: changelog && changelog.changed }
         )}
         style={{ paddingLeft: depth * IndentSpaces + 4 }}
       >
@@ -60,19 +57,19 @@ export const RenderField = ({
   const sharedClasses = useSharedStyles();
   const { Indent, depth } = useDepth();
 
-  console.log(changelog);
-
-  return [
-    <ShapeRowBase depth={depth} {...changelog}>
-      <span className={sharedClasses.shapeFont}>"{fieldKey}"</span>
-      <span className={sharedClasses.symbolFont}>: </span>
-      <RenderFieldLeadingValue shapeRenderers={shapeRenderers} />
-      {!required && (
-        <span className={sharedClasses.symbolFont}> (optional) </span>
-      )}
-    </ShapeRowBase>,
-    <RenderFieldRowValues shapeRenderers={shapeRenderers} />,
-  ];
+  return (
+    <>
+      <ShapeRowBase depth={depth} changelog={changelog}>
+        <span className={sharedClasses.shapeFont}>"{fieldKey}"</span>
+        <span className={sharedClasses.symbolFont}>: </span>
+        <RenderFieldLeadingValue shapeRenderers={shapeRenderers} />
+        {!required && (
+          <span className={sharedClasses.symbolFont}> (optional) </span>
+        )}
+      </ShapeRowBase>
+      <RenderFieldRowValues shapeRenderers={shapeRenderers} />
+    </>
+  );
 };
 
 export const RenderRootShape = ({
@@ -107,17 +104,28 @@ export const RenderFieldLeadingValue = ({
   shapeRenderers,
 }: RenderFieldValueProps) => {
   const sharedClasses = useSharedStyles();
-  console.log('render me inline', shapeRenderers[0]);
   if (shapeRenderers.length === 1) {
     const shape = shapeRenderers[0];
     if (shape.jsonType === JsonLike.OBJECT && shape.asObject) {
-      return [<span className={sharedClasses.symbolFont}>{'{'}</span>];
+      return (
+        <>
+          <span className={sharedClasses.symbolFont}>{'{'}</span>
+        </>
+      );
     }
     if (shape.jsonType === JsonLike.ARRAY && shape.asArray) {
-      return [<span className={sharedClasses.symbolFont}>{'['}</span>];
+      return (
+        <>
+          <span className={sharedClasses.symbolFont}>{'['}</span>
+        </>
+      );
     }
 
-    return [<ShapePrimitiveRender {...shape} />];
+    return (
+      <>
+        <ShapePrimitiveRender {...shape} />
+      </>
+    );
   } else {
     return <span>'invariant, one of'</span>;
   }
@@ -131,16 +139,19 @@ export const RenderFieldRowValues = ({
   if (shapeRenderers.length === 1) {
     const shape = shapeRenderers[0];
     if (shape.asObject) {
-      return [
-        ...shape.asObject.fields.map((i) => (
-          <Indent>
-            <RenderField {...i} key={i.fieldId} />
-          </Indent>
-        )),
-        <ShapeRowBase depth={depth}>
-          <span className={sharedClasses.symbolFont}>{'}'}</span>
-        </ShapeRowBase>,
-      ];
+      return (
+        <>
+          {shape.asObject.fields.map((i) => (
+            <Indent>
+              <RenderField {...i} key={i.fieldId} />
+            </Indent>
+          ))}
+          <ShapeRowBase depth={depth}>
+            <span className={sharedClasses.symbolFont}>{'}'}</span>
+          </ShapeRowBase>
+          ,
+        </>
+      );
     }
 
     if (shape.asArray) {
@@ -158,15 +169,17 @@ export const RenderFieldRowValues = ({
           <RenderRootShape shape={shape.asArray.listItem[0]} />
         );
 
-      return [
-        <Indent>{inner}</Indent>,
-        <ShapeRowBase depth={depth}>
-          <span className={sharedClasses.symbolFont}>{']'}</span>
-        </ShapeRowBase>,
-      ];
+      return (
+        <>
+          <Indent>{inner}</Indent>,
+          <ShapeRowBase depth={depth}>
+            <span className={sharedClasses.symbolFont}>{']'}</span>
+          </ShapeRowBase>
+        </>
+      );
     }
 
-    return [];
+    return <></>;
   } else {
     return <span>'invariant, one of'</span>;
   }
