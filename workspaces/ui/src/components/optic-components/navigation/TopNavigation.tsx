@@ -34,8 +34,8 @@ export function TopNavigation(props) {
                 {apiName}
               </Typography>
 
-              <NavButton title="Docs" Icon={SubjectIcon} />
-              <NavButton title="Diffs" Icon={ChangeHistoryIcon} />
+              <NavButton title="Docs" to="/documentation" Icon={SubjectIcon} />
+              <NavButton title="Diffs" to="/review" Icon={ChangeHistoryIcon} />
               {/*<NavButton title="Team" Icon={ImportExportIcon} />*/}
             </div>
             <div className={classes.spacer} />

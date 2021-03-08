@@ -149,7 +149,6 @@ export const RenderFieldRowValues = ({
           <ShapeRowBase depth={depth}>
             <span className={sharedClasses.symbolFont}>{'}'}</span>
           </ShapeRowBase>
-          ,
         </>
       );
     }
@@ -216,9 +215,6 @@ export function OneOfRender({
       shape={shapes.find((i) => chosenShapeToRender.id === i.shapeId)}
     />
   );
-
-  // if (showExamples) {
-  // }
 }
 
 const useStyles = makeStyles((theme) => ({

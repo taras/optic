@@ -43,6 +43,24 @@ export function BodyRender(props: BodyRenderProps) {
   );
 }
 
+export type CodeBlockProps = {
+  header?: any;
+  children: any;
+  headerText?: string;
+};
+
+export function CodeBlock({ header, children, headerText }: CodeBlockProps) {
+  const classes = useStyles();
+  return (
+    <div className={classes.wrapper}>
+      <div className={classes.header}>{headerText || header}</div>
+      <div className={classes.content} style={{ padding: 0 }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 const useStyles = makeStyles((theme) => ({
   wrapper: {
     overflow: 'hidden',
@@ -68,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#e4e8ed',
     color: '#4f566b',
     flex: 1,
-    fontSize: 14,
+    fontSize: 13,
     height: 35,
     display: 'flex',
     fontWeight: 400,

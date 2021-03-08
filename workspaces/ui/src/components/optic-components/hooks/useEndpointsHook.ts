@@ -107,7 +107,10 @@ export function useEndpoints(renderChangesSince?: string): IEndpoint[] {
           .filter((a) => a.isPathParameter)
           .map((a) => ({
             pathComponentId: a.pathComponentId,
-            name: a.pathComponentName,
+            pathComponentName: a.pathComponentName.substring(
+              1,
+              a.pathComponentName.length - 1
+            ),
           })),
         pathId: i.pathId,
         method: i.method,
@@ -142,5 +145,5 @@ export interface IEndpoint {
 
 export interface IPathParameter {
   pathComponentId: string;
-  description?: string;
+  pathComponentName: string;
 }

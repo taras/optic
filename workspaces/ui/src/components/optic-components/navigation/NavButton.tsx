@@ -13,17 +13,29 @@ import {
 import { Button } from '@material-ui/core';
 import DescriptionIcon from '@material-ui/icons/Description';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
+import { useBaseUrl } from '../../../contexts/BaseUrlContext';
+import { useHistory } from 'react-router-dom';
 
 export type NavButtonProps = {
   Icon: React.ElementType;
   title: string;
+  to: string;
 };
 
 export function NavButton(props: NavButtonProps) {
   const classes = useStyles();
-  const { Icon, title } = props;
+  const { Icon, title, to } = props;
+
+  const baseUrl = useBaseUrl();
+  const history = useHistory();
+
   return (
-    <div className={classes.root}>
+    <div
+      className={classes.root}
+      onClick={() => {
+        history.push(`${baseUrl}${to}`);
+      }}
+    >
       <div className={classes.box}>
         <Icon className={classes.iconStyles} />
       </div>

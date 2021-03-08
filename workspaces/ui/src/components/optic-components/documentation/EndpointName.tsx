@@ -7,6 +7,8 @@ import {
   ListItemSecondaryAction,
   Typography,
 } from '@material-ui/core';
+import { useContributionEditing } from '../hooks/edit/Contributions';
+import { EndpointNameMiniContribution } from './Contributions';
 export type EndpointNameProps = {
   method: string;
   fullPath: string;
@@ -41,7 +43,7 @@ export function EndpointName({
 
 export type EndpointRowProps = {
   method: string;
-  purpose?: string;
+  endpointId: string;
   fullPath: string;
   onClick: () => void;
 };
@@ -49,17 +51,28 @@ export type EndpointRowProps = {
 export function EndpointRow({
   method,
   fullPath,
-  purpose,
+  endpointId,
   onClick,
 }: EndpointRowProps) {
   const classes = useStyles();
+
   return (
-    <ListItem button disableRipple disableGutters style={{ display: 'flex' }}>
+    <ListItem
+      button
+      disableRipple
+      disableGutters
+      style={{ display: 'flex' }}
+      onClick={onClick}
+    >
       <div style={{ flex: 1 }}>
         <EndpointName method={method} fullPath={fullPath} leftPad={4} />
       </div>
       <div style={{ paddingRight: 15 }}>
-        <Typography className={classes.endpointName}>{purpose}</Typography>
+        <EndpointNameMiniContribution
+          id={endpointId}
+          defaultText="name for this endpoint"
+          contributionKey="purpose"
+        />
       </div>
     </ListItem>
   );

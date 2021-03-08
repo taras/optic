@@ -13,6 +13,13 @@ import { getEndpointId } from '../../../utilities/EndpointUtilities';
 import { EndpointNameContribution } from '../documentation/Contributions';
 import { MarkdownBodyContribution } from '../documentation/MarkdownBodyContribution';
 import { TwoColumn } from '../documentation/TwoColumn';
+import { useBaseUrl } from '../../../contexts/BaseUrlContext';
+import { useHistory } from 'react-router-dom';
+import { PathParametersViewEdit } from '../documentation/PathParameters';
+import { EndpointTOC } from '../documentation/EndpointTOC';
+import { useEndpointBody } from '../hooks/useEndpointBodyHook';
+import { CodeBlock } from '../documentation/BodyRender';
+import { SubtleBlueBackground } from '../../../theme';
 
 export function DocumentationPages(props: any) {
   const routerPaths = useRouterPaths();
@@ -47,6 +54,10 @@ function DocumentationRootPage(props: any) {
 
   const grouped = useMemo(() => groupBy(endpoints, 'group'), [endpoints]);
   const tocKeys = Object.keys(grouped).sort();
+
+  const baseUrl = useBaseUrl();
+  const history = useHistory();
+
   return (
     <CenteredColumn maxWidth="md" style={{ marginTop: 35 }}>
       <List dense>
@@ -63,10 +74,17 @@ function DocumentationRootPage(props: any) {
                 return (
                   <EndpointRow
                     key={index}
-                    purpose={endpoint.purpose}
-                    onClick={() => {}}
+                    onClick={() =>
+                      history.push(
+                        `${baseUrl}/documentation/paths/${endpoint.pathId}/methods/${endpoint.method}`
+                      )
+                    }
                     fullPath={endpoint.fullPath}
                     method={endpoint.method}
+                    endpointId={getEndpointId({
+                      method: endpoint.method,
+                      pathId: endpoint.pathId,
+                    })}
                   />
                 );
               })}
@@ -83,10 +101,18 @@ function EndpointRootPage(props: any) {
 
   const { match } = props;
   const { pathId, method } = match.params;
+
+  const bodies = useEndpointBody(pathId, method);
+
   const thisEndpoint = useMemo(
     () => endpoints.find((i) => i.pathId === pathId && i.method === method),
     [pathId, method]
   );
+
+  if (!thisEndpoint) {
+    return <>no endpoint here</>;
+  }
+
   const endpointId = getEndpointId({ method, pathId });
   return (
     <FullWidth>
@@ -111,7 +137,32 @@ function EndpointRootPage(props: any) {
             defaultText={'Describe this endpoint'}
           />
         }
-        right={<div>HELLO WORLD</div>}
+        right={
+          <CodeBlock
+            header={
+              <EndpointName
+                fontSize={14}
+                leftPad={0}
+                method={thisEndpoint.method}
+                fullPath={thisEndpoint.fullPath}
+              />
+            }
+          >
+            <PathParametersViewEdit parameters={thisEndpoint.pathParameters} />
+            <div
+              style={{
+                marginTop: 10,
+                backgroundColor: SubtleBlueBackground,
+                borderTop: '1px solid #e2e2e2',
+              }}
+            >
+              <EndpointTOC
+                requests={bodies.requests}
+                responses={bodies.responses}
+              />
+            </div>
+          </CodeBlock>
+        }
       />
     </FullWidth>
   );

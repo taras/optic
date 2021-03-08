@@ -54,18 +54,16 @@ export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
 
             if (!shouldShow) return null;
 
-            return (
-              <FieldOrParameterContribution
-                depth={i.depth}
-                name={i.name}
-                shapes={i.shapes}
-                currentDescription={currentDescription}
-                key={i.contributionId + i.name + index}
-                updateDescription={(value) => {
-                  updateContribution(i.contributionId, value);
-                }}
-              />
-            );
+            return null;
+
+            // return (
+            //   <FieldOrParameterContribution
+            //     depth={i.depth}
+            //     name={i.name}
+            //     shapes={i.shapes}
+            //     key={i.contributionId + i.name + index}
+            //   />
+            // );
           })}
         </div>
       </DepthStore>

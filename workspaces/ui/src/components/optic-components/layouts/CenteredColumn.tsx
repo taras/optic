@@ -7,7 +7,7 @@ export function CenteredColumn(props: any) {
 
   return (
     <div className={classes.centered}>
-      <Container maxWidth="md" style={props.style}>
+      <Container maxWidth="lg" style={props.style}>
         {props.children}
       </Container>
     </div>
@@ -18,7 +18,5 @@ const useStyles = makeStyles((theme) => ({
   centered: {
     display: 'flex',
     alignItems: 'center',
-    paddingLeft: 14,
-    paddingRight: 14,
   },
 }));

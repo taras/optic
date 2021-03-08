@@ -17,30 +17,32 @@ import {
 
 export type FieldOrParameterContributionProps = {
   shapes: IShapeRenderer[];
+  id: string;
   name: string;
-  currentDescription?: string;
   depth: number;
-  updateDescription: (string) => void;
 };
 
 export function FieldOrParameterContribution({
   name,
+  id,
   shapes,
   depth,
-  currentDescription,
-  updateDescription,
 }: FieldOrParameterContributionProps) {
   const classes = useStyles();
+  const contributionKey = 'description';
+  const {
+    isEditing,
+    lookupContribution,
+    stagePendingContribution,
+  } = useContributionEditing();
 
-  const [description, setDescription] = useState(currentDescription || '');
-
-  const { isEditing } = useContributionGroup();
-
+  const value = lookupContribution(id, contributionKey);
+  const [description, setDescription] = useState(value || '');
   const debouncedDescription = useDebounce(description, 500);
 
   useEffect(() => {
     if (debouncedDescription) {
-      updateDescription(description);
+      stagePendingContribution(id, contributionKey, debouncedDescription);
     }
   }, [debouncedDescription]);
 
@@ -138,6 +140,60 @@ export function EndpointNameContribution({
   );
 }
 
+export function EndpointNameMiniContribution({
+  id,
+  contributionKey,
+  defaultText,
+}: EndpointNameContributionProps) {
+  const {
+    lookupContribution,
+    isEditing,
+    stagePendingContribution,
+    setEditing,
+  } = useContributionEditing();
+  const value = lookupContribution(id, contributionKey);
+  const classes = useStyles();
+
+  const [stagedValue, setStagedValue] = useState(value || '');
+
+  const debouncedChanges = useDebounce(stagedValue, 1000);
+
+  useEffect(() => {
+    if (debouncedChanges && stagedValue !== value) {
+      stagePendingContribution(id, contributionKey, debouncedChanges);
+    }
+  }, [debouncedChanges]);
+
+  const isEmpty = !Boolean(stagedValue.trim());
+
+  const inner = isEditing ? (
+    <TextField
+      inputProps={{ className: classes.endpointNameMini }}
+      error={isEmpty}
+      fullWidth
+      style={{ minWidth: 300 }}
+      placeholder={defaultText}
+      value={stagedValue}
+      onChange={(e) => {
+        setStagedValue(e.target.value);
+      }}
+    />
+  ) : (
+    <Typography className={classes.endpointNameMini}>
+      {value ? (
+        value
+      ) : (
+        <span onClick={() => setEditing(true)} className={classes.defaultText}>
+          {' '}
+          + {defaultText}
+        </span>
+      )}
+    </Typography>
+  );
+
+  return <>{inner}</>;
+}
+
 function summarizeTypes(shapes: IShapeRenderer[]) {
   if (shapes.length === 1) {
     return shapes[0].jsonType.toString().toLowerCase();
@@ -162,7 +218,7 @@ const useStyles = makeStyles((theme) => ({
   },
   description: {
     fontFamily: 'Ubuntu',
-    fontWeight: 400,
+    fontWeight: 200,
     fontSize: 14,
     lineHeight: 1.8,
     color: '#4f566b',
@@ -174,6 +230,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 400,
     color: '#8792a2',
     height: 18,
+    marginTop: 2,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -189,6 +246,13 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Ubuntu, Inter',
     fontWeight: 500,
     lineHeight: 1.6,
+  },
+  endpointNameMini: {
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Ubuntu',
+    pointerEvents: 'none',
+    color: '#2a2f45',
   },
   defaultText: {
     color: OpticBlueReadable,
