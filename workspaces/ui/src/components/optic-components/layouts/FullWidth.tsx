@@ -6,7 +6,7 @@ export function FullWidth(props: any) {
   const classes = useStyles();
 
   return (
-    <Container maxWidth="lg" className={classes.wrapper}>
+    <Container maxWidth="lg" className={classes.wrapper} style={props.style}>
       {props.children}
     </Container>
   );

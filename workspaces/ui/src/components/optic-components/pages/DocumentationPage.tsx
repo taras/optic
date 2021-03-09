@@ -20,6 +20,7 @@ import { EndpointTOC } from '../documentation/EndpointTOC';
 import { useEndpointBody } from '../hooks/useEndpointBodyHook';
 import { CodeBlock } from '../documentation/BodyRender';
 import { SubtleBlueBackground } from '../../../theme';
+import { TwoColumnBody } from '../documentation/RenderBody';
 
 export function DocumentationPages(props: any) {
   const routerPaths = useRouterPaths();
@@ -115,7 +116,7 @@ function EndpointRootPage(props: any) {
 
   const endpointId = getEndpointId({ method, pathId });
   return (
-    <FullWidth>
+    <FullWidth style={{ paddingBottom: 400 }}>
       <EndpointNameContribution
         id={endpointId}
         contributionKey="purpose"
@@ -127,7 +128,6 @@ function EndpointRootPage(props: any) {
         method={thisEndpoint.method}
         fullPath={thisEndpoint.fullPath}
       />
-
       <TwoColumn
         style={{ marginTop: 5 }}
         left={
@@ -164,6 +164,19 @@ function EndpointRootPage(props: any) {
           </CodeBlock>
         }
       />
+
+      {bodies.requests.map((i) => (
+        <TwoColumnBody
+          bodyId={i.requestId}
+          location={'Request Body Parameters'}
+        />
+      ))}
+      {bodies.responses.map((i) => (
+        <TwoColumnBody
+          bodyId={i.responseId}
+          location={`${i.statusCode} Response`}
+        />
+      ))}
     </FullWidth>
   );
 }

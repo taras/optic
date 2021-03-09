@@ -15,66 +15,38 @@ import { ShapeRenderStore } from '../shapes/ShapeRenderContext';
 import { ChoiceSwitch, ChoiceTabs, OneOfTabsProps } from '../shapes/OneOfTabs';
 import { DepthStore } from '../shapes/DepthContext';
 import { FieldOrParameterContribution } from './Contributions';
-
-export const ContributionGroupContext = React.createContext({});
+import { useContributionEditing } from '../hooks/edit/Contributions';
 
 type ContributionGroupProps = { rootShape: IShapeRenderer[] };
 
 export const ContributionGroup = ({ rootShape }: ContributionGroupProps) => {
   const classes = useStyles();
   const contributions = createFlatList(rootShape);
-  const [overrideContributions, setOverrideContributions] = useState({});
-  const [isEditing, setIsEditing] = useState(false);
 
-  const updateContribution = (key: string, value: string) => {
-    setOverrideContributions((i) => ({ ...i, [key]: value }));
-  };
+  const { isEditing, lookupContribution } = useContributionEditing();
 
   return (
-    <ContributionGroupContext.Provider value={{ isEditing }}>
-      <DepthStore depth={0}>
-        <div className={classes.edit}>
-          <Typography variant="h6" style={{ fontSize: 24 }}>
-            200 Response
-          </Typography>
-
-          <div style={{ flex: 1 }} />
-          <ChoiceSwitch
-            active={isEditing}
-            setActive={() => setIsEditing(!isEditing)}
-            label={isEditing ? 'save' : 'edit descriptions'}
-          />
-        </div>
-        <div className={classes.container}>
-          {contributions.map((i, index) => {
-            const currentDescription =
-              overrideContributions[i.contributionId] || i.description;
-
-            const shouldShow = Boolean(currentDescription || isEditing);
-
-            if (!shouldShow) return null;
-
-            return null;
-
-            // return (
-            //   <FieldOrParameterContribution
-            //     depth={i.depth}
-            //     name={i.name}
-            //     shapes={i.shapes}
-            //     key={i.contributionId + i.name + index}
-            //   />
-            // );
-          })}
-        </div>
-      </DepthStore>
-    </ContributionGroupContext.Provider>
+    <DepthStore depth={0}>
+      <div className={classes.container}>
+        {contributions.map((i, index) => {
+          const currentDescription = lookupContribution(
+            i.contributionId,
+            'description'
+          );
+          return (
+            <FieldOrParameterContribution
+              depth={i.depth}
+              id={i.contributionId}
+              name={i.name}
+              shapes={i.shapes}
+              key={i.contributionId + i.name + index}
+            />
+          );
+        })}
+      </div>
+    </DepthStore>
   );
 };
-
-export function useContributionGroup(): { isEditing: boolean } {
-  //@ts-ignore
-  return useContext(ContributionGroupContext);
-}
 
 interface IContributions {
   contributionId: string;
