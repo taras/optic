@@ -70,7 +70,8 @@ jobs:
         platform:
           - os: ubuntu-latest
             build_command: |
-              docker-compose run devel task \
+              docker-compose run -e BUILD_ARGS=$BUILD_ARGS \
+              devel task \
                 diff-engine:add-targets \
                 diff-engine:build-windows \
                 diff-engine:build-linux
