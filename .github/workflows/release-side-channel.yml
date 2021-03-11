@@ -71,7 +71,6 @@ jobs:
           - os: ubuntu-latest
             build_command: |
               docker-compose run devel task \
-                util:create-docker-network \
                 diff-engine:add-targets \
                 diff-engine:build-windows \
                 diff-engine:build-linux
@@ -110,6 +109,9 @@ jobs:
             echo "SDKROOT=$(xcrun -sdk macosx11.1 --show-sdk-path)" >> $GITHUB_ENV
             echo "MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx11.1 --show-sdk-platform-version)" >> $GITHUB_ENV
           fi
+      - name: Configure Docker
+        if: runner.os == 'Linux'
+        run: task util:create-docker-network
       - name: Build
         env:
           BUILD_ARGS: --all-features --workspace --release
