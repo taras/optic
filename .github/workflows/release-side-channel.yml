@@ -71,6 +71,7 @@ jobs:
           - os: ubuntu-latest
             build_command: |
               docker-compose run devel task \
+                util:create-docker-network \
                 diff-engine:add-targets \
                 diff-engine:build-windows \
                 diff-engine:build-linux
@@ -113,7 +114,6 @@ jobs:
         env:
           BUILD_ARGS: --all-features --workspace --release
         run: |
-          task util:create-docker-network
           ${{ matrix.platform.build_command }}
           task flush-to-disk
       - run: task diff-engine:locate-binaries
