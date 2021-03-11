@@ -70,7 +70,7 @@ jobs:
         platform:
           - os: ubuntu-latest
             build_command: |
-              docker-compose run -e BUILD_ARGS=$BUILD_ARGS \
+              docker-compose run -e BUILD_ARGS="$BUILD_ARGS" \
               devel task \
                 diff-engine:add-targets \
                 diff-engine:build-windows \
@@ -117,7 +117,7 @@ jobs:
         env:
           BUILD_ARGS: --all-features --workspace --release
         run: |
-          BUILD_ARGS=$BUILD_ARGS ${{ matrix.platform.build_command }}
+          ${{ matrix.platform.build_command }}
           task flush-to-disk
       - run: task diff-engine:locate-binaries
       # - name: Publish
