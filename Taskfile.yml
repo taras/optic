@@ -30,10 +30,7 @@ tasks:
     env:
       OPTIC_SKIP_PREBUILT_INSTALLS: "true"
     cmds:
-      - |
-        # add rust env to path
-        source $HOME/.profile
-        yarn install
+      - yarn install
 
   workspaces:build:
     desc: Build Yarn workspaces
@@ -43,9 +40,6 @@ tasks:
       - task: workspaces:setup
     cmds:
       - |
-        # add rust env to path
-        source $HOME/.profile
-
         if [[ -n "$FLAGS_FILE" ]]; then
           echo "Feature flags found ($FLAGS_FILE), copying to packages for build and runtime."
           cp $FLAGS_FILE .env
