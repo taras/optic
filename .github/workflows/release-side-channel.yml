@@ -48,6 +48,16 @@ jobs:
         run: |
           echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
           echo "SIDE_CHANNEL_BUCKET=optic-side-channel-production" >> $GITHUB_ENV
+      - name: Cache diff-engine build output
+        uses: actions/cache@v2
+        with:
+          path: |
+            workspaces/diff-engine-wasm/lib/**
+            workspaces/diff-engine-wasm/engine/browser/**
+            workspaces/diff-engine-wasm/engine/build/**
+            workspace/diff-engine-wasm/engine/target
+            workspaces/*/build/**
+          key: ${{ runner.os }}-${{ hashFiles('workspaces/**') }}-v1
       # test: pulling the image before initializing the docker layer cache action will
       # prevent the dlc action from caching this image. this may be faster than downloading
       # the layers from GH's cache service. ideally, we only cache layers that we've built
