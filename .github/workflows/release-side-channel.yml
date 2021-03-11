@@ -99,7 +99,7 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@060516122e7b4cc1cc3d4614a998adbb93d3fbf2 # v1.2.2
-        if: runner.os == ubuntu-latest
+        if: runner.os == "ubuntu-latest"
       - name: Set env
         run: |
           echo "VERSION_TAG=b${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
