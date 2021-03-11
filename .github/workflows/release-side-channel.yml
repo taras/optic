@@ -119,6 +119,12 @@ jobs:
             echo "SDKROOT=$(xcrun -sdk macosx11.1 --show-sdk-path)" >> $GITHUB_ENV
             echo "MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx11.1 --show-sdk-platform-version)" >> $GITHUB_ENV
           fi
+      - name: Cache diff-engine build output
+        uses: actions/cache@v2
+        with:
+          path: |
+            ./target
+          key: ${{ runner.os }}-${{ hashFiles('workspaces/diff-engine/**') }}-v1
       # test: pulling the image before initializing the docker layer cache action will
       # prevent the dlc action from caching this image. this may be faster than downloading
       # the layers from GH's cache service. ideally, we only cache layers that we've built
