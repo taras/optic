@@ -109,9 +109,8 @@ jobs:
         env:
           BUILD_ARGS: --all-features --workspace --release
         run: |
-          task \
-            ${{ matrix.platform.build_command }} \
-            flush-to-disk
+          ${{ matrix.platform.build_command }} \
+          task flush-to-disk
       - run: task diff-engine:locate-binaries
       # - name: Publish
       #   env:
