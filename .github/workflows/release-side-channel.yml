@@ -57,7 +57,7 @@ jobs:
             workspaces/diff-engine-wasm/engine/build/**
             workspace/diff-engine-wasm/engine/target/**
             workspaces/*/build/**
-          key: ${{ runner.os }}-${{ hashFiles('./workspaces/**', 'yarn.lock', '**/yarn.lock') }}-v1
+          key: ${{ runner.os }}-${{ hashFiles('workspaces/*/src/**', '**/package.json', 'yarn.lock', '**/yarn.lock') }}-v1
       # test: pulling the image before initializing the docker layer cache action will
       # prevent the dlc action from caching this image. this may be faster than downloading
       # the layers from GH's cache service. ideally, we only cache layers that we've built
