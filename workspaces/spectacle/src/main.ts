@@ -1183,10 +1183,49 @@ const _events = [
     }
   }
 ]
+const _endpointChanges = {
+  opticUrl: 'https://example.com',
+  endpoints: [
+    {
+      change: {
+        category: 'added'
+      },
+      path: '/foo',
+      method: 'get'
+    },
+    {
+      change: {
+        category: 'updated'
+      },
+      path: '/bar',
+      method: 'post'
+    }
+  ]
+}
 async function main() {
   const spectacle = makeSpectacle(DiffEngine, {
-    specEvents: _events
+    specEvents: _events,
+    endpointChanges: _endpointChanges
   })
+
+  const endpointChangesResult = await spectacle({
+    query: `{
+  endpointChanges {
+    opticUrl
+    endpoints {
+      change {
+        category
+      }
+      path
+      method
+    }
+  }
+}`,
+    variables: {}
+  })
+
+  console.log(JSON.stringify(endpointChangesResult, null, 2))
+
   const result = await spectacle({
     query: `{ 
     requests {

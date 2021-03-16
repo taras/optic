@@ -5,6 +5,7 @@ schema {
 type Query {
   requests: [HttpRequest]
   shapeChoices(shapeId: ID): [OpticShape]
+  endpointChanges: EndpointChanges
 }
 type HttpBody {
   contentType: String
@@ -48,6 +49,18 @@ type OpticShape {
   asObject: ObjectMetadata
   asArray: ArrayMetadata
   # exampleValue: [JSON]
+}
+type EndpointChanges {
+  opticUrl: String
+  endpoints: [EndpointChange]
+}
+type EndpointChange {
+  change: EndpointChangeMetadata
+  path: String
+  method: String
+}
+type EndpointChangeMetadata {
+  category: String
 }
 
 `;

@@ -6,6 +6,7 @@ import { shapes, endpoints } from '@useoptic/graph-lib';
 
 export interface IOpticContext {
   specEvents: any[];
+  endpointChanges: any;
 }
 
 function buildEndpointsGraph(spec: any, opticEngine: any) {
@@ -88,6 +89,9 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       },
       shapeChoices: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(context.shapeViewerProjection[args.shapeId]);
+      },
+      endpointChanges: (parent: any, args: any, context: any, info: any) => {
+        return Promise.resolve(context.opticContext.endpointChanges)
       }
     },
     HttpRequest: {
@@ -150,6 +154,30 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
     ArrayMetadata: {
       shapeId: (parent: any) => {
         return Promise.resolve(parent.itemShapeId)
+      }
+    },
+    EndpointChanges: {
+      opticUrl: (parent: any) => {
+        return Promise.resolve(parent.opticUrl);
+      },
+      endpoints: (parent: any) => {
+        return Promise.resolve(parent.endpoints);
+      }
+    },
+    EndpointChange: {
+      change: (parent: any) => {
+        return Promise.resolve(parent.change);
+      },
+      path: (parent: any) => {
+        return Promise.resolve(parent.path)
+      },
+      method: (parent: any) => {
+        return Promise.resolve(parent.method);
+      }
+    },
+    EndpointChangeMetadata: {
+      category: (parent: any) => {
+        return Promise.resolve(parent.category);
       }
     }
   };
