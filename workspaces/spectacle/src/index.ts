@@ -3,10 +3,30 @@ import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shapes, endpoints } from '@useoptic/graph-lib';
 
+const _mockEndpointChanges = {
+  data: {
+    opticUrl: 'https://example.com',
+    endpoints: [
+      {
+        change: {
+          category: 'added'
+        },
+        path: '/foo',
+        method: 'get'
+      },
+      {
+        change: {
+          category: 'updated'
+        },
+        path: '/bar',
+        method: 'post'
+      }
+    ]
+  }
+}
 
 export interface IOpticContext {
   specEvents: any[];
-  endpointChanges: any;
 }
 
 function buildEndpointsGraph(spec: any, opticEngine: any) {
@@ -14,8 +34,6 @@ function buildEndpointsGraph(spec: any, opticEngine: any) {
   const {
     nodes, edges, nodeIndexToId
   } = serializedGraph;
-
-  console.log(serializedGraph)
 
   const indexer = new endpoints.GraphIndexer();
 
@@ -82,7 +100,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
 
   const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
   const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
-  // console.log({ shapeViewerProjection });
+  console.log({ shapeViewerProjection });
 
   const resolvers = {
     Query: {
@@ -93,7 +111,8 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
         return Promise.resolve(context.shapeViewerProjection[args.shapeId]);
       },
       endpointChanges: (parent: any, args: any, context: any, info: any) => {
-        return Promise.resolve(context.opticContext.endpointChanges)
+        // TODO: pass `since` arg and spect to function to build this
+        return Promise.resolve(_mockEndpointChanges)
       },
       batchCommits:  (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(context.endpointsQueries.listNodesByType(endpoints.NodeType.BatchCommit).results);
@@ -163,10 +182,10 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
     },
     EndpointChanges: {
       opticUrl: (parent: any) => {
-        return Promise.resolve(parent.opticUrl);
+        return Promise.resolve(parent.data.opticUrl);
       },
       endpoints: (parent: any) => {
-        return Promise.resolve(parent.endpoints);
+        return Promise.resolve(parent.data.endpoints);
       }
     },
     EndpointChange: {
@@ -187,10 +206,10 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
     },
     BatchCommit: {
       createdAt: (parent: any) => {
-        return Promise.resolve(parent.result.created_at);
+        return Promise.resolve(parent.result.data.createdAt);
       },
       batchId: (parent: any) => {
-        return Promise.resolve(parent.result.batch_id);
+        return Promise.resolve(parent.result.data.batchId);
       }
     }
   };

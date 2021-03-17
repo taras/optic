@@ -1204,8 +1204,7 @@ const _endpointChanges = {
 }
 async function main() {
   const spectacle = makeSpectacle(DiffEngine, {
-    specEvents: _events,
-    endpointChanges: _endpointChanges
+    specEvents: _events
   })
 
   const batchCommitResults = await spectacle({
@@ -1220,63 +1219,63 @@ async function main() {
 
   console.log(JSON.stringify(batchCommitResults, null, 2))
 
-//   const endpointChangesResult = await spectacle({
-//     query: `{
-//   endpointChanges {
-//     opticUrl
-//     endpoints {
-//       change {
-//         category
-//       }
-//       path
-//       method
-//     }
-//   }
-// }`,
-//     variables: {}
-//   })
+  const endpointChangesResult = await spectacle({
+    query: `{
+  endpointChanges {
+    opticUrl
+    endpoints {
+      change {
+        category
+      }
+      path
+      method
+    }
+  }
+}`,
+    variables: {}
+  })
 
-  // console.log(JSON.stringify(endpointChangesResult, null, 2))
+  console.log(JSON.stringify(endpointChangesResult, null, 2))
 
-//   const result = await spectacle({
-//     query: `{ 
-//     requests {
-//       id
-//       pathId
-//       absolutePathPattern
-//       method
-//       bodies {
-//         contentType
-//         rootShapeId
-//       }
-//       responses {
-//         id
-//         statusCode
-//         bodies {
-//           contentType
-//           rootShapeId
-//         }
-//       }
-//     }
-// }`,
-//     variables: {}
-//   })
+  const result = await spectacle({
+    query: `{ 
+    requests {
+      id
+      pathId
+      absolutePathPattern
+      method
+      bodies {
+        contentType
+        rootShapeId
+      }
+      responses {
+        id
+        statusCode
+        bodies {
+          contentType
+          rootShapeId
+        }
+      }
+    }
+}`,
+    variables: {}
+  })
 
-//   console.log(JSON.stringify(result, null, 2))
+  console.log(JSON.stringify(result, null, 2))
 
-//   {
-//     const result = await spectacle({
-//       query: `{ 
-//     shapeChoices(shapeId: "shape_RvMMDY4eOD") {
-//       id
-//       jsonType
-//     }
-// }`,
-//       variables: {}
-//     })
-//     console.log(JSON.stringify(result, null, 2))
+  {
+    const result = await spectacle({
+      query: `{ 
+    shapeChoices(shapeId: "shape_RvMMDY4eOD") {
+      id
+      jsonType
+    }
+}`,
+      variables: {}
+    })
+    console.log(JSON.stringify(result, null, 2))
 
-//   }
+  }
 }
 
 main()

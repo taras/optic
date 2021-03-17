@@ -5,7 +5,7 @@ schema {
 type Query {
   requests: [HttpRequest]
   shapeChoices(shapeId: ID): [OpticShape]
-  endpointChanges: EndpointChanges
+  endpointChanges(since: String): EndpointChanges
   batchCommits: [BatchCommit]
 }
 type HttpBody {

@@ -170,7 +170,7 @@ export class BatchCommitNodeWrapper implements NodeWrapper {
 ////////////////////////////////////////////////////////////////////////////////
 
 export class GraphQueries {
-  constructor(public index: GraphIndexer) {
+  constructor(private index: GraphIndexer) {
   }
 
   findNodeById(id: NodeId): NodeWrapper | null {
