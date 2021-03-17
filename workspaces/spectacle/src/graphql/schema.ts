@@ -6,6 +6,7 @@ type Query {
   requests: [HttpRequest]
   shapeChoices(shapeId: ID): [OpticShape]
   endpointChanges: EndpointChanges
+  batchCommits: [BatchCommit]
 }
 type HttpBody {
   contentType: String
@@ -62,5 +63,8 @@ type EndpointChange {
 type EndpointChangeMetadata {
   category: String
 }
-
+type BatchCommit {
+  createdAt: String
+  batchId: String
+}
 `;

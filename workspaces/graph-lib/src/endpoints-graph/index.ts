@@ -7,6 +7,7 @@ export enum NodeType {
   Request = 'Request',
   Response = 'Response',
   Body = 'Body',
+  BatchCommit = 'BatchCommit',
 }
 
 export type Node = {
@@ -23,6 +24,9 @@ export type Node = {
 } | {
   type: NodeType.Body,
   data: BodyNode
+} | {
+  type: NodeType.BatchCommit,
+  data: BatchCommitNode
 })
 
 export type PathNode = {
@@ -42,6 +46,11 @@ export type ResponseNode = {
 export type BodyNode = {
   httpContentType: string
   rootShapeId: string
+}
+
+export type BatchCommitNode = {
+  createdAt: string
+  batchId: string
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,10 +162,15 @@ export class PathNodeWrapper implements NodeWrapper {
   }
 }
 
+export class BatchCommitNodeWrapper implements NodeWrapper {
+  constructor(public result: Node, private queries: GraphQueries) {
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 export class GraphQueries {
-  constructor(private index: GraphIndexer) {
+  constructor(public index: GraphIndexer) {
   }
 
   findNodeById(id: NodeId): NodeWrapper | null {
@@ -201,6 +215,8 @@ export class GraphQueries {
       return new PathNodeWrapper(node, this);
     } else if (node.type === NodeType.Body) {
       return { result: node };
+    } else if (node.type === NodeType.BatchCommit) {
+      return new BatchCommitNodeWrapper(node, this);
     }
     throw new Error(`unexpected node.type`);
   }

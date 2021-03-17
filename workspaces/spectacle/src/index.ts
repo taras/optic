@@ -15,6 +15,8 @@ function buildEndpointsGraph(spec: any, opticEngine: any) {
     nodes, edges, nodeIndexToId
   } = serializedGraph;
 
+  console.log(serializedGraph)
+
   const indexer = new endpoints.GraphIndexer();
 
   function remapId(arrayIndex: number) {
@@ -80,7 +82,7 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
 
   const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
   const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
-  console.log({ shapeViewerProjection });
+  // console.log({ shapeViewerProjection });
 
   const resolvers = {
     Query: {
@@ -92,6 +94,9 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       },
       endpointChanges: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(context.opticContext.endpointChanges)
+      },
+      batchCommits:  (parent: any, args: any, context: any, info: any) => {
+        return Promise.resolve(context.endpointsQueries.listNodesByType(endpoints.NodeType.BatchCommit).results);
       }
     },
     HttpRequest: {
@@ -178,6 +183,14 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
     EndpointChangeMetadata: {
       category: (parent: any) => {
         return Promise.resolve(parent.category);
+      }
+    },
+    BatchCommit: {
+      createdAt: (parent: any) => {
+        return Promise.resolve(parent.result.created_at);
+      },
+      batchId: (parent: any) => {
+        return Promise.resolve(parent.result.batch_id);
       }
     }
   };
