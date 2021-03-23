@@ -2,6 +2,7 @@ import { graphql } from 'graphql';
 import { schema } from './graphql/schema';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shapes, endpoints } from '@useoptic/graph-lib';
+import { GraphQueries } from '../../graph-lib/build/endpoints-graph';
 
 const _mockEndpointChanges = {
   data: {
@@ -93,6 +94,29 @@ function buildShapesGraph(spec: any, opticEngine: any) {
   return queries;
 }
 
+import {inspect} from "util"
+
+// TODO: change output type
+function buildEndpointChanges(queries: GraphQueries, since?: string): any {
+  let sortedBatchCommits = queries
+    .listNodesByType(endpoints.NodeType.BatchCommit).results
+    .sort((a: any, b:any) => {
+      return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1
+    })
+
+  // If there is no date since, we want to use every batch commit
+  const delta = since
+    ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > since)
+    : sortedBatchCommits;
+
+  // TODO:
+  // go through each commit
+  // if request created, then endpoint created
+  // if response created, check if endpoint was created in previous batch
+  // - if not, endpoint updated
+  // - if so, endpoint created, ignore
+}
+
 export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
   const spec = opticEngine.spec_from_events(
     JSON.stringify(opticContext.specEvents)
@@ -100,7 +124,8 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
 
   const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
   const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
-  console.log({ shapeViewerProjection });
+
+  buildEndpointChanges(endpointsQueries, "2021-02-01T18:25:15.656Z")
 
   const resolvers = {
     Query: {
