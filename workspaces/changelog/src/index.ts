@@ -1,68 +1,71 @@
 import * as DiffEngine from '@useoptic/diff-engine-wasm/engine/build';
 import { makeSpectacle } from '@useoptic/spectacle';
-import { events } from './data';
+import { initial, current } from './data';
 
-// TODO: where to put this?
-export type EndpointChanges = {
-  data: {
-    opticUrl: string
-    endpoints: {
-      change: {
-        category: string
+
+export async function generateEndpointChanges(initialEvents: any = [], currentEvents: any): Promise<any> {
+  let query;
+
+  // We only need to add a "since" to the query if there are initial events.
+  if (initialEvents.length) {
+    const initialSpectacle = makeSpectacle(DiffEngine, {
+      specEvents: initialEvents
+    });
+
+    const batchCommitResults = await initialSpectacle({
+      query: `{
+        batchCommits {
+          createdAt
+          batchId
+        }
+      }`,
+      variables: {}
+    });
+
+    // TODO: consider making this into a query
+    const latestBatchCommit = batchCommitResults.data!.batchCommits!
+      .reduce((result: any, batchCommit: any) => {
+        return batchCommit.createdAt > result.createdAt ? batchCommit : result;
+      });
+
+    query = `{
+      endpointChanges(since: "${latestBatchCommit.createdAt}") {
+        endpoints {
+          change {
+            category
+          }
+          path
+          method
+        }
       }
-      path: string
-      method: string
-    }[]
+    }`;
+  } else {
+    query = `{
+      endpointChanges {
+        endpoints {
+          change {
+            category
+          }
+          path
+          method
+        }
+      }
+    }`;
   }
-}
-
-export async function generateEndpointChanges(initialEvents: any, currentEvents: any): Promise<any> {
-  const initialSpectacle = makeSpectacle(DiffEngine, {
-    specEvents: initialEvents
-  });
-  const batchCommitResults = await initialSpectacle({
-    query: `{
-  batchCommits {
-    createdAt
-    batchId
-  }
-}`,
-    variables: {}
-  });
-
-  // TODO: should handle changes for entire currentEvents
-  // This means there are no events. I suppose we could check for that first
-  if (batchCommitResults.data!.batchCommits!.length === 0) {
-    throw new Error("TODO: handle this");
-  }
-
-  const lastBatchId = batchCommitResults.data!.batchCommits!
-    .sort((a: any, b: any) => (a.createdAt < b.createdAt) ? 1 : -1)[0].batchId;
 
   const currentSpectacle = makeSpectacle(DiffEngine, {
     specEvents: currentEvents
   });
 
   return await currentSpectacle({
-    query: `{
-  endpointChanges(since: "${lastBatchId}") {
-    opticUrl
-    endpoints {
-      change {
-        category
-      }
-      path
-      method
-    }
-  }
-}`,
+    query,
     variables: {}
   });
 }
 
 // TODO: remove
 async function main() {
-  const results = await generateEndpointChanges(events, events);
+  const results = await generateEndpointChanges(initial, current);
   console.log(JSON.stringify(results, null, 2));
 }
 

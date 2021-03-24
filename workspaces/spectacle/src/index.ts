@@ -126,6 +126,8 @@ function buildEndpointChanges(queries: GraphQueries, since?: string): EndpointCh
       const endpointId = `${path} ${method}`;
 
       // If the endpoint is there, we should ignore this change
+      // We can then assume if the endpoint does not exist, it means
+      // this endpoint should be marked as updated.
       if (changes.has(endpointId)) return
 
       changes.set(endpointId, {
