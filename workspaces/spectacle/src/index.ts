@@ -139,17 +139,11 @@ function buildEndpointChanges(queries: GraphQueries, since?: string): EndpointCh
     });
   });
 
-  const endpointChanges: EndpointChanges = {
+  return {
     data: {
-      endpoints: []
+      endpoints: Array.from(changes.values())
     }
-  };
-
-  for (const change of changes.values()) {
-    endpointChanges.data.endpoints.push(change);
-  }
-
-  return endpointChanges;
+  } as EndpointChanges;
 }
 
 export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
