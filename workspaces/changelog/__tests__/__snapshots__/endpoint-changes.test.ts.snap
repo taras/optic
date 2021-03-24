@@ -18,6 +18,24 @@ Object {
 }
 `;
 
+exports[`Generate Endpoint Changes Check add-status-code scenario 1`] = `
+Object {
+  "data": Object {
+    "endpointChanges": Object {
+      "endpoints": Array [
+        Object {
+          "change": Object {
+            "category": "updated",
+          },
+          "method": "GET",
+          "path": "/user",
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`Generate Endpoint Changes Check empty-initial scenario 1`] = `
 Object {
   "data": Object {
