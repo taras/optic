@@ -1221,8 +1221,7 @@ async function main() {
 
   const endpointChangesResult = await spectacle({
     query: `{
-  endpointChanges {
-    opticUrl
+  endpointChanges(since: "2021-02-01T18:25:15.656Z") {
     endpoints {
       change {
         category

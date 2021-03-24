@@ -165,6 +165,14 @@ export class PathNodeWrapper implements NodeWrapper {
 export class BatchCommitNodeWrapper implements NodeWrapper {
   constructor(public result: Node, private queries: GraphQueries) {
   }
+
+  requests(): NodeListWrapper {
+    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Request);
+  }
+
+  responses(): NodeListWrapper {
+    return this.queries.listIncomingNeighborsByType(this.result.id, NodeType.Response);
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

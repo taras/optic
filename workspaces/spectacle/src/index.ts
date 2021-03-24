@@ -4,27 +4,6 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { shapes, endpoints } from '@useoptic/graph-lib';
 import { GraphQueries } from '../../graph-lib/build/endpoints-graph';
 
-const _mockEndpointChanges = {
-  data: {
-    opticUrl: 'https://example.com',
-    endpoints: [
-      {
-        change: {
-          category: 'added'
-        },
-        path: '/foo',
-        method: 'get'
-      },
-      {
-        change: {
-          category: 'updated'
-        },
-        path: '/bar',
-        method: 'post'
-      }
-    ]
-  }
-}
 
 export interface IOpticContext {
   specEvents: any[];
@@ -94,27 +73,83 @@ function buildShapesGraph(spec: any, opticEngine: any) {
   return queries;
 }
 
-import {inspect} from "util"
+type EndpointChanges = {
+  data: {
+    endpoints: {
+      change: {
+        category: string
+      }
+      path: string
+      method: string
+    }[]
+  }
+}
 
-// TODO: change output type
-function buildEndpointChanges(queries: GraphQueries, since?: string): any {
+function buildEndpointChanges(queries: GraphQueries, since?: string): EndpointChanges {
   let sortedBatchCommits = queries
     .listNodesByType(endpoints.NodeType.BatchCommit).results
     .sort((a: any, b:any) => {
       return (a.result.data.createdAt < b.result.data.createdAt) ? 1 : -1
     })
 
-  // If there is no date since, we want to use every batch commit
-  const delta = since
+  // If there is no `since` date, we want to use every batch commit
+  const deltaBatchCommits = since
     ? sortedBatchCommits.filter((batchCommit: any) => batchCommit.result.data.createdAt > since)
     : sortedBatchCommits;
 
-  // TODO:
-  // go through each commit
-  // if request created, then endpoint created
-  // if response created, check if endpoint was created in previous batch
-  // - if not, endpoint updated
-  // - if so, endpoint created, ignore
+  const changes = new Map();
+
+  // Go through requests first. When we go through responses second, we can check
+  // to see if the endpoint has been added by a request existing in the batch commits.
+  // If the endpoint exists, we can ignore since it's already there. Otherwise we
+  // can say the endpoint was updated.
+  deltaBatchCommits.forEach((batchCommit: any) => {
+    batchCommit.requests().results.forEach((request: any) => {
+      const path = request.path().result.data.absolutePathPattern;
+      const method = request.result.data.httpMethod;
+      const endpointId = `${path} ${method}`;
+
+      if (!changes.has(endpointId)) {
+        changes.set(endpointId, {
+          change: {
+            category: "added"
+          },
+          path,
+          method
+        })
+      }
+    })
+
+    batchCommit.responses().results.forEach((response: any) => {
+      const pathNode = response.path();
+      const path = pathNode.result.data.absolutePathPattern;
+      const method = response.result.data.httpMethod;
+      const endpointId = `${path} ${method}`;
+
+      // If the endpoint is there, we should ignore this change
+      if (changes.has(endpointId)) return
+
+      changes.set(endpointId, {
+        change: {
+          category: "updated"
+        },
+        path,
+        method
+      })
+    });
+  });
+
+  const endpointChanges: EndpointChanges = {
+    data: {
+      endpoints: []
+    }
+  };
+
+  for (const change of changes.values()) {
+    endpointChanges.data.endpoints.push(change);
+  }
+
+  return endpointChanges;
 }
 
 export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
@@ -125,8 +160,6 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
   const endpointsQueries = buildEndpointsGraph(spec, opticEngine);
   const shapeViewerProjection = JSON.parse(opticEngine.get_shape_viewer_projection(spec));
 
-  buildEndpointChanges(endpointsQueries, "2021-02-01T18:25:15.656Z")
-
   const resolvers = {
     Query: {
       requests: (parent: any, args: any, context: any, info: any) => {
@@ -135,9 +168,9 @@ export function makeSpectacle(opticEngine: any, opticContext: IOpticContext) {
       shapeChoices: (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(context.shapeViewerProjection[args.shapeId]);
       },
-      endpointChanges: (parent: any, args: any, context: any, info: any) => {
-        // TODO: pass `since` arg and spect to function to build this
-        return Promise.resolve(_mockEndpointChanges)
+      endpointChanges: (parent: any, { since }: { since?: string }, context: any, info: any) => {
+        const endpointChanges = buildEndpointChanges(endpointsQueries, since);
+        return Promise.resolve(endpointChanges);
       },
       batchCommits:  (parent: any, args: any, context: any, info: any) => {
         return Promise.resolve(context.endpointsQueries.listNodesByType(endpoints.NodeType.BatchCommit).results);
