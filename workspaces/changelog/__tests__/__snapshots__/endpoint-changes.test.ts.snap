@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Generate Endpoint Changes Check add-method scenario 1`] = `
+Object {
+  "data": Object {
+    "endpointChanges": Object {
+      "endpoints": Array [
+        Object {
+          "change": Object {
+            "category": "added",
+          },
+          "method": "POST",
+          "path": "/user",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`Generate Endpoint Changes Check empty-initial scenario 1`] = `
+Object {
+  "data": Object {
+    "endpointChanges": Object {
+      "endpoints": Array [
+        Object {
+          "change": Object {
+            "category": "added",
+          },
+          "method": "POST",
+          "path": "/user",
+        },
+        Object {
+          "change": Object {
+            "category": "added",
+          },
+          "method": "GET",
+          "path": "/user",
+        },
+      ],
+    },
+  },
+}
+`;
