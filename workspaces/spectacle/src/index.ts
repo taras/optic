@@ -109,15 +109,14 @@ function buildEndpointChanges(queries: GraphQueries, since?: string): EndpointCh
       const method = request.result.data.httpMethod;
       const endpointId = `${path} ${method}`;
 
-      if (!changes.has(endpointId)) {
-        changes.set(endpointId, {
-          change: {
-            category: "added"
-          },
-          path,
-          method
-        })
-      }
+      // We can always assume a new request means a new endpoint
+      changes.set(endpointId, {
+        change: {
+          category: "added"
+        },
+        path,
+        method
+      })
     })
 
     batchCommit.responses().results.forEach((response: any) => {
