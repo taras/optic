@@ -2,18 +2,18 @@ import { Command } from '@oclif/command';
 import {
   LocalTaskSessionWrapper,
   runCommandFlags,
-} from '../shared/local-cli-task-runner';
+} from '../../shared/local-cli-task-runner';
 import readline from 'readline';
 import { developerDebugLogger, loadPathsAndConfig } from '@useoptic/cli-shared';
 import * as uuid from 'uuid';
-import { getCaptureId } from '../shared/git/git-context-capture';
+import { getCaptureId } from '../../shared/git/git-context-capture';
 import { getPathsRelativeToConfig, readApiConfig } from '@useoptic/cli-config';
 import { EventEmitter } from 'events';
 import { Client, SpecServiceClient } from '@useoptic/cli-client';
 import { CaptureSaverWithDiffs } from '@useoptic/cli-shared/build/captures/avro/file-system/capture-saver-with-diffs';
 import { ensureDaemonStarted } from '@useoptic/cli-server';
-import { lockFilePath } from '../shared/paths';
-import { Config } from '../config';
+import { lockFilePath } from '../../shared/paths';
+import { Config } from '../../config';
 import { IHttpInteraction } from '@useoptic/domain-types';
 
 /*
@@ -25,13 +25,11 @@ Experimental interface to allow traffic to get into capture savers from other so
 {"uuid":"5ac8da3e-a057-4622-ab3e-9ac5305e44a5","request":{"host":"","method":"PATCH","path":"/todos/ie7ocpzr5","query":{"shapeHashV1Base64":null,"asJsonString":null,"asText":null},"headers":{"shapeHashV1Base64":null,"asJsonString":null,"asText":null},"body":{"contentType":"application/json","value":{"shapeHashV1Base64":"CAASCgoEdGFzaxICCAISEAoKYXNzaWduZWRCeRICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=","asJsonString":null,"asText":null}}},"response":{"statusCode":200,"headers":{"shapeHashV1Base64":null,"asJsonString":null,"asText":null},"body":{"contentType":"application/json","value":{"shapeHashV1Base64":"CAASCgoEdGFzaxICCAISEAoKYXNzaWduZWRCeRICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=","asJsonString":null,"asText":null}}},"tags":[]}
  */
 
-export default class IngestTraffic extends Command {
+export default class IngestStdin extends Command {
   static description = '[do not use] experimental';
   static hidden = true;
-  static flags = runCommandFlags;
 
   async run() {
-    const { flags } = this.parse(IngestTraffic);
     try {
       const paths = await getPathsRelativeToConfig();
 
