@@ -119,7 +119,8 @@ export function useShapeDescriptor(
 
     task();
     // should only run once
-  }, [spectacle]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spectacle, rootShapeId]);
 
   return x;
 }

@@ -31,7 +31,6 @@ import { EndpointName } from '../../documentation/EndpointName';
 import { useEndpoint } from '../../hooks/useEndpointsHook';
 import { SpectacleContext } from '../../../spectacle-implementations/spectacle-provider';
 import { IForkableSpectacle } from '@useoptic/spectacle';
-import { useLastBatchCommitId } from '../../hooks/useBatchCommits';
 import { useDiffReviewCapturePageLink } from '../../navigation/Routes';
 
 export function ReviewEndpointDiffPage(props: any) {
@@ -43,14 +42,13 @@ export function ReviewEndpointDiffPage(props: any) {
   const spectacle = useContext(SpectacleContext)!;
 
   const diffReviewPage = useDiffReviewCapturePageLink();
-  const lastBatchCommitId = useLastBatchCommitId();
+  // const lastBatchCommitId = useLastBatchCommitId();
   const endpointDiffs = useEndpointDiffs(pathId, method);
   const endpoint = useEndpoint(pathId, method);
   const {
     context,
     approveCommandsForDiff,
     isDiffHandled,
-    addDiffHashIgnore,
   } = useSharedDiffContext();
 
   const shapeDiffs = useShapeDiffInterpretations(
@@ -80,7 +78,14 @@ export function ReviewEndpointDiffPage(props: any) {
     ) {
       history.push(diffReviewPage.linkTo());
     }
-  }, [filteredShapeDiffs.length]);
+  }, [
+    filteredShapeDiffs.length,
+    diffReviewPage,
+    filteredShapeDiffs,
+    history,
+    isDiffHandled,
+    shapeDiffs.results,
+  ]);
 
   const renderedDiff: IInterpretation | undefined = useMemo(() => {
     if (selectedDiff) {
@@ -283,7 +288,7 @@ function DiffLinks({
       }
     });
     return sections;
-  }, [shapeDiffs.length]);
+  }, [shapeDiffs]);
 
   return (
     <List>
@@ -310,6 +315,8 @@ function DiffLinks({
                       <ICopyRender variant="" copy={i.diffDescription!.title} />
                     </ListItem>
                   );
+
+                return null;
               })}
             </div>
           );
@@ -335,6 +342,8 @@ function DiffLinks({
                       <ICopyRender variant="" copy={i.diffDescription!.title} />
                     </ListItem>
                   );
+
+                return null;
               })}
             </div>
           );
