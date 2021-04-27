@@ -156,14 +156,14 @@ impl ConflictsProjection {
       .get(&parent_path_id)
       .expect("expected parent_path_id to exist in graph");
     let absolute_path_string: AbsolutePathPattern = if parent_path_id == ROOT_PATH_ID {
-      format!("/{{}}")
+      format!("/{{{}}}", path_name)
     } else {
       let parent_node = self
         .graph
         .node_weight(*parent_node_index)
         .expect("expected parent_path_id to exist in graph");
       match parent_node {
-        Node::Path(parent_absolute_path, _) => format!("{}/{{}}", parent_absolute_path),
+        Node::Path(parent_absolute_path, _) => format!("{}/{{{}}}", parent_absolute_path, path_name),
         _ => panic!("expected parent_node to be a Path"),
       }
     };
