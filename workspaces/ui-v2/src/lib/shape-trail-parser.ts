@@ -239,7 +239,15 @@ async function getFieldFromRootShapeId(
     };
   } = {};
 
+  const seenSet: Set<string> = new Set();
+
   async function accumulateShapes(rootShapeId: string) {
+    if (seenSet.has(rootShapeId)) {
+      return [];
+    } else {
+      seenSet.add(rootShapeId);
+    }
+
     const result = await spectacle.query({
       variables: {
         shapeId: rootShapeId,
