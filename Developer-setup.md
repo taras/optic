@@ -22,6 +22,8 @@ It's a good idea to have a design in place beforehand. It doesn't have to be fan
 - [Task](https://taskfile.dev/) for running tasks.
 - [Git](https://git-scm.com/) to manage the code repository.
 
+If you're on MacOS you can install the core dependencies via `sh ./macinstall.sh`, if you are on an ARM (M1) rather than Intel device you will need to follow https://github.com/opticdev/optic/issues/603 for a workaround currently.
+
 ## Setup
 
 If you're using an IDE (like IntelliJ), some of these steps may be handled by your tool. For example, installing dependencies is common behavior from a language-aware IDE. You may want to open your IDE after cloning the Optic project and walk through it. If you don't have that capability, or want to install everything by hand, the instructions below should work.
