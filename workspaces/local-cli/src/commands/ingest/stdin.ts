@@ -15,14 +15,13 @@ import { ensureDaemonStarted } from '@useoptic/cli-server';
 import { lockFilePath } from '../../shared/paths';
 import { Config } from '../../config';
 import { IHttpInteraction } from '@useoptic/domain-types';
-import http from 'http';
 /*
 Experimental interface to allow traffic to get into capture savers from other sources
  */
 /*
 {"uuid":"5ac8da3e-a057-4622-ab3e-9ac5305e44a5","request":{"host":"","method":"PATCH","path":"/todos/ie7ocpzr5","query":{"shapeHashV1Base64":null,"asJsonString":null,"asText":null},"headers":{"shapeHashV1Base64":null,"asJsonString":null,"asText":null},"body":{"contentType":"application/json","value":{"shapeHashV1Base64":"CAASCgoEdGFzaxICCAISEAoKYXNzaWduZWRCeRICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=","asJsonString":null,"asText":null}}},"response":{"statusCode":200,"headers":{"shapeHashV1Base64":null,"asJsonString":null,"asText":null},"body":{"contentType":"application/json","value":{"shapeHashV1Base64":"CAASCgoEdGFzaxICCAISEAoKYXNzaWduZWRCeRICCAISDQoHZHVlRGF0ZRICCAISDAoGaXNEb25lEgIIBBIICgJpZBICCAI=","asJsonString":null,"asText":null}}},"tags":[]}
  */
-export default class IngestNetwork extends Command {
+export default class IngestStdin extends Command {
   static description = '[do not use] experimental';
   static hidden = true;
   async run() {
@@ -30,6 +29,10 @@ export default class IngestNetwork extends Command {
       const paths = await getPathsRelativeToConfig();
       const config = await readApiConfig(paths.configPath);
       const captureId = await getCaptureId(paths);
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
       /* definitely do this is another promise */
       const daemonState = await ensureDaemonStarted(
         lockFilePath,
@@ -56,30 +59,16 @@ export default class IngestNetwork extends Command {
         specServiceClient
       );
       await persistenceManager.init();
-      // @TODO select more adequate port or select random available TCP port
-      const port = 3030;
-      const host = 'localhost';
-      // @TODO allow for configuration of a HTTP or UDP server via params
-      const server = http.createServer((req, res) => {
-        developerDebugLogger('Receiving new request');
-        let data = '';
-        req.on('data', (chunk) => {
-          data += chunk;
-        });
-        req.on('end', () => {
-          res.writeHead(200);
-          res.end();
-          const ECS = JSON.parse(data);
-          const httpInteraction = IngestNetwork.ecsToHttpInteraction(ECS);
-          if (this.isValidHttpInteraction(httpInteraction)) {
-            persistenceManager.save(httpInteraction);
-          } else {
-            developerDebugLogger('Not compatible IHTTPInteraction');
+      rl.on('line', (input) => {
+        try {
+          const json: IHttpInteraction = JSON.parse(input);
+          if (this.isValidHttpInteraction(json)) {
+            console.log('trying to save');
+            // persistenceManager.save(json);
           }
-        });
-      });
-      server.listen(port, host, () => {
-        console.log(`OpticHTTPReceiver http://${host}:${port}`);
+        } catch (e) {
+          //invalid json input
+        }
       });
     } catch (e) {
       console.log('No Optic project found' + e);
@@ -88,42 +77,5 @@ export default class IngestNetwork extends Command {
   }
   isValidHttpInteraction(json: any): boolean {
     return true;
-  }
-  static ecsToHttpInteraction(ecs: any): IHttpInteraction {
-    const { request, response } = ecs.http;
-    const { query, path, domain } = ecs.url;
-    return {
-      uuid: uuid.v4(),
-      request: {
-        host: domain,
-        method: request.method,
-        path,
-        query,
-        headers: request.headers,
-        body: {
-          contentType:
-            request.headers && request.headers['content-type']
-              ? request.headers['content-type']
-              : null,
-          value:
-            request.body && request.body.content ? request.body.content : null,
-        },
-      },
-      response: {
-        statusCode: response.status_code,
-        headers: response.headers,
-        body: {
-          contentType:
-            response.headers && response.headers['content-type']
-              ? response.headers['content-type']
-              : null,
-          value:
-            response.body && response.body.content
-              ? response.body.content
-              : null,
-        },
-      },
-      tags: [],
-    };
   }
 }
