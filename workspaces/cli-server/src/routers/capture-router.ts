@@ -172,8 +172,6 @@ export function makeRouter(dependencies: ICaptureRouterDependencies) {
     const { captureId } = req.params;
     const { body } = req;
 
-    // validate body is array of ecs
-
     const getOrCreateCaptureSaver = async (captureId: string) => {
       if (instances.has(captureId)) {
         return instances.get(captureId)!;
