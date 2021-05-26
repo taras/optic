@@ -22,6 +22,7 @@
     "@useoptic/cli-shared": "10.0.2",
     "@useoptic/diff-engine-wasm": "10.0.2",
     "@useoptic/graph-lib": "10.0.2",
+    "@useoptic/optic-streams": "10.0.2",
     "graphql": "14",
     "graphql-type-json": "^0.3.2",
     "uuid": "^8.3.2"
