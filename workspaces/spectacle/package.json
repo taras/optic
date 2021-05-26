@@ -32,5 +32,8 @@
     "@types/uuid": "^8",
     "tap": "^14.11.0",
     "typescript": "3.9"
+  },
+  "peerDependencies": {
+    "graphql": "^14"
   }
 }
