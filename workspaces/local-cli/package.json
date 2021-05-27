@@ -27,7 +27,7 @@
     "@useoptic/client-utilities": "10.0.2",
     "@useoptic/spectacle": "10.0.2",
     "@useoptic/spectacle-shared": "10.0.2",
-    "@useoptic/diff-engine-wasm": "10.0.2",
+    "@useoptic/optic-engine-wasm": "10.0.2",
     "analytics-node": "^3.4.0-beta.1",
     "assert": "^2.0.0",
     "cli-table3": "^0.6.0",

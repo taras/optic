@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 dotenv:
   - .env
@@ -27,10 +27,10 @@ includes:
 
 tasks:
   postpull:
-    deps: ["workspaces:clean", "workspaces:build"]
+    deps: ['workspaces:clean', 'workspaces:build']
   workspaces:setup:
     env:
-      OPTIC_SKIP_PREBUILT_INSTALLS: "true"
+      OPTIC_SKIP_PREBUILT_INSTALLS: 'true'
     cmds:
       - yarn install
       - yarn run husky install
@@ -46,7 +46,7 @@ tasks:
     desc: Build Yarn workspaces
     vars:
       FLAGS_FILE: '{{.FLAGS_FILE}}'
-    deps: ["workspaces:setup"]
+    deps: ['workspaces:setup']
     cmds:
       - |
         if [[ -n "$FLAGS_FILE" ]]; then
@@ -63,10 +63,9 @@ tasks:
     sources:
       - !workspaces/*/build/**/*
     generates:
-      - workspaces/diff-engine-wasm/lib/**/*
-      - workspaces/diff-engine-wasm/engine/browser/**/*
-      - workspaces/diff-engine-wasm/engine/build/**/*
-      - workspace/diff-engine-wasm/engine/target/**/*
+      - workspaces/optic-engine-wasm/browser/**/*
+      - workspaces/optic-engine-wasm/build/**/*
+      - workspace/optic-engine-wasm/target/**/*
       - workspaces/*/build/**/*
 
   workspaces:build:ci:
@@ -86,7 +85,7 @@ tasks:
     deps:
       - workspaces:build
     env:
-      OPTIC_SKIP_PREBUILT_INSTALLS: "false"
+      OPTIC_SKIP_PREBUILT_INSTALLS: 'false'
     cmds:
       - yarn install
 
@@ -108,7 +107,7 @@ tasks:
         * TAG — the Docker image tag
         * USER — the user to direct the message at
     vars:
-      MESSAGE: "{{.USER}}: `{{.REPO}}:{{.TAG}}` was pushed to our Docker registry."
+      MESSAGE: '{{.USER}}: `{{.REPO}}:{{.TAG}}` was pushed to our Docker registry.'
     env:
       DATA: '{"text":"{{.MESSAGE}}"}'
     cmds:
